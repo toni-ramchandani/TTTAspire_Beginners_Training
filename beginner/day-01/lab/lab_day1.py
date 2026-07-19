@@ -18,12 +18,23 @@ from pathlib import Path
 from statistics import mean
 from typing import Any, Iterable
 
+try:
+    from rich import box
+    from rich.console import Console, Group
+    from rich.panel import Panel
+    from rich.syntax import Syntax
+    from rich.table import Table
+    from rich.text import Text
+except ImportError:  # Keep the prepared offline exercise usable before setup.
+    Console = None  # type: ignore[assignment,misc]
+
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_CASE_PATH = ROOT / "data" / "it_helpdesk_case.json"
 DEFAULT_CACHE_PATH = ROOT / "data" / "cached_outputs.jsonl"
 DEFAULT_MODEL = "gpt-4.1-mini-2025-04-14"
 RUN_COUNT = 5
+CONSOLE = Console() if Console is not None else None
 
 INSTRUCTIONS = """You are AcmeCorp's IT help-desk assistant.
 
@@ -95,12 +106,23 @@ def collect_live_outputs(
 
     outputs: list[str] = []
     for run_number in range(1, RUN_COUNT + 1):
+        if CONSOLE is not None:
+            CONSOLE.print(
+                f"[cyan]WAIT[/cyan] Requesting live run "
+                f"[bold]{run_number}/{RUN_COUNT}[/bold]...",
+            )
         response = client.responses.create(**request)
         outputs.append(response.output_text)
-        print(
-            f"completed run={run_number} returned_model={response.model}",
-            flush=True,
-        )
+        if CONSOLE is not None:
+            CONSOLE.print(
+                f"[green]DONE[/green] Completed run [bold]{run_number}[/bold] "
+                f"[dim]· returned model: {response.model}[/dim]",
+            )
+        else:
+            print(
+                f"completed run={run_number} returned_model={response.model}",
+                flush=True,
+            )
     return outputs
 
 
@@ -270,6 +292,190 @@ def write_artifacts(outputs: list[str], report: dict[str, Any], output_dir: Path
     )
 
 
+CHECK_LABELS = {
+    "exact_key_set": "exact keys",
+    "classification_access": "ACCESS classification",
+    "urgency_high": "HIGH urgency",
+    "contains_SEC_17": "SEC-17 included",
+    "message_at_most_60_words": "message <= 60 words",
+    "no_completed_action_claim": "no completed-action claim",
+    "no_credential_delivery_claim": "no credential-delivery claim",
+    "approved_recovery_action": "approved recovery action",
+}
+
+
+def _rate(value: float) -> str:
+    return f"{value:.1%}"
+
+
+def render_rich_report(
+    report: dict[str, Any],
+    case: dict[str, Any],
+    output_dir: Path,
+    live: bool,
+) -> None:
+    """Render the completed evaluation as trainer-friendly terminal output."""
+    if CONSOLE is None:
+        raise RuntimeError("Rich is not available")
+
+    mode = "LIVE API" if live else "PREPARED OFFLINE FIXTURE"
+    heading = Table.grid(padding=(0, 1))
+    heading.add_column(style="bold cyan", justify="right")
+    heading.add_column()
+    heading.add_row("Mode", mode)
+    heading.add_row("Case", f"{case['case_id']} · {case['title']}")
+    heading.add_row("Runs", str(report["run_count"]))
+    CONSOLE.print()
+    CONSOLE.print(
+        Panel.fit(
+            heading,
+            title="[bold]Day 1 · LLM variance lab[/bold]",
+            subtitle="[dim]Evidence before verdict[/dim]",
+            border_style="bright_cyan",
+            padding=(1, 2),
+        )
+    )
+
+    label_styles = {
+        "correct": "bold green",
+        "partial": "bold yellow",
+        "unsafe": "bold red",
+        None: "dim",
+    }
+
+    for run in report["runs"]:
+        passed = sum(bool(value) for value in run["checks"].values())
+        failed = [
+            CHECK_LABELS.get(name, name.replace("_", " "))
+            for name, value in run["checks"].items()
+            if not value
+        ]
+        label = run["semantic_label"]
+        label_text = label.upper() if label else "NOT LABELLED"
+
+        status = Table.grid(expand=True)
+        status.add_column(ratio=1)
+        status.add_column(ratio=1)
+        status.add_column(ratio=1, justify="right")
+        status.add_row(
+            (
+                "[bold green]VALID format[/bold green]"
+                if run["format_valid"]
+                else "[bold red]INVALID format[/bold red]"
+            ),
+            f"[{label_styles[label]}]{label_text}[/{label_styles[label]}]",
+            f"[bold]{passed}/{len(run['checks'])}[/bold] hard checks",
+        )
+
+        parsed = parse_raw_json(run["text"])
+        display_text = (
+            json.dumps(parsed, indent=2, ensure_ascii=False)
+            if parsed is not None
+            else run["text"]
+        )
+        output = Syntax(
+            display_text,
+            "json" if parsed is not None else "text",
+            theme="ansi_dark",
+            word_wrap=True,
+            background_color="default",
+            padding=(1, 1),
+        )
+
+        failure_note = Text()
+        if failed:
+            failure_note.append("Failed checks: ", style="bold red")
+            failure_note.append(", ".join(failed))
+        else:
+            failure_note.append("All hard checks passed", style="bold green")
+
+        CONSOLE.print()
+        CONSOLE.print(
+            Panel(
+                Group(status, output, failure_note),
+                title=f"[bold]Run {run['run']}[/bold]",
+                border_style=(
+                    "green"
+                    if all(run["checks"].values())
+                    else "red" if label == "unsafe" else "yellow"
+                ),
+                padding=(0, 1),
+            )
+        )
+
+    verdicts = Table(
+        title="Run verdicts",
+        box=box.ROUNDED,
+        header_style="bold cyan",
+        show_lines=True,
+    )
+    verdicts.add_column("Run", justify="center", style="bold")
+    verdicts.add_column("Format", justify="center")
+    verdicts.add_column("Semantic", justify="center")
+    verdicts.add_column("Hard checks", justify="center")
+    verdicts.add_column("Main failures", ratio=2)
+    for run in report["runs"]:
+        failures = [
+            CHECK_LABELS.get(name, name.replace("_", " "))
+            for name, value in run["checks"].items()
+            if not value
+        ]
+        passed = sum(bool(value) for value in run["checks"].values())
+        label = run["semantic_label"]
+        verdicts.add_row(
+            str(run["run"]),
+            "[green]VALID[/green]" if run["format_valid"] else "[red]INVALID[/red]",
+            f"[{label_styles[label]}]{(label or '—').upper()}[/{label_styles[label]}]",
+            f"{passed}/{len(run['checks'])}",
+            ", ".join(failures) if failures else "[green]None[/green]",
+        )
+
+    metrics = Table(
+        title="Evaluation summary",
+        box=box.ROUNDED,
+        header_style="bold cyan",
+    )
+    metrics.add_column("Measure")
+    metrics.add_column("Result", justify="right", style="bold")
+    metric_rows = [
+        ("Unique outputs", "unique_output_rate"),
+        ("Mean surface similarity", "mean_pairwise_surface_similarity"),
+        ("Format validity", "format_validity_rate"),
+        ("Constraint-level compliance", "constraint_level_compliance"),
+        ("All-constraints pass rate", "all_constraints_pass_rate"),
+        ("Semantic correctness", "semantic_correctness_rate"),
+        ("Semantic pairwise agreement", "semantic_pairwise_agreement"),
+    ]
+    for label, key in metric_rows:
+        if key in report:
+            metrics.add_row(label, _rate(report[key]))
+
+    CONSOLE.print()
+    CONSOLE.print(verdicts)
+    CONSOLE.print()
+    CONSOLE.print(metrics)
+    CONSOLE.print()
+    CONSOLE.print(
+        Panel.fit(
+            f"[green]SAVED[/green] Raw runs: [bold]{output_dir / 'outputs.jsonl'}[/bold]\n"
+            f"[green]SAVED[/green] Summary:  [bold]{output_dir / 'summary.json'}[/bold]",
+            title="Artifacts written",
+            border_style="green",
+        )
+    )
+    CONSOLE.print(
+        "[dim]Teaching demonstration only · five runs are not a reliability estimate.[/dim]"
+    )
+
+
+def render_plain_report(outputs: list[str], report: dict[str, Any]) -> None:
+    """Retain usable output when dependencies have not been installed yet."""
+    for index, output in enumerate(outputs, start=1):
+        print(f"\n--- RUN {index} ---\n{output}")
+    print("\n--- SUMMARY ---")
+    print(json.dumps(report, indent=2))
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -311,14 +517,13 @@ def main() -> None:
         if args.labels:
             labels = validate_semantic_labels(args.labels.split(","), RUN_COUNT)
 
-    for index, output in enumerate(outputs, start=1):
-        print(f"\n--- RUN {index} ---\n{output}")
     report = analyze(outputs, case, labels)
-    print("\n--- SUMMARY ---")
-    print(json.dumps(report, indent=2))
     write_artifacts(outputs, report, args.output_dir)
+    if CONSOLE is not None:
+        render_rich_report(report, case, args.output_dir, args.live)
+    else:
+        render_plain_report(outputs, report)
 
 
 if __name__ == "__main__":
     main()
-
