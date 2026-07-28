@@ -5,7 +5,7 @@ Evaluation curriculum.
 
 ## Current module
 
-- [`beginner/day-01/index.html`](beginner/day-01/index.html) — standalone
+- [`beginner/day-01/Day1_Interactive_LLM_Evaluation.html`](beginner/day-01/Day1_Interactive_LLM_Evaluation.html) — standalone
   Technical Story Engine for **GenAI & LLM Foundations for QA**.
 - [`beginner/day-01/lab/`](beginner/day-01/lab/) — runnable five-run variance
   lab with an offline fallback and deterministic tests.
