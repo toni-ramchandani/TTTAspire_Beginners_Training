@@ -1,0 +1,1974 @@
+<!doctype html>
+<html lang="en" data-visualize-standalone>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>LLM Decoding Animation · Logits to Sampling</title>
+<style>:root {
+  color-scheme: light dark;
+  background-color: transparent !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --main-surface-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: light-dark(rgb(26 28 31), rgb(255 255 255));
+  --card: color-mix(in oklab, var(--foreground) 5%, transparent);
+  --card-foreground: var(--foreground);
+  --popover: light-dark(rgb(255 255 255), rgb(45 45 45));
+  --popover-foreground: var(--foreground);
+  --primary: light-dark(rgb(51 156 255), rgb(131 195 255));
+  --primary-foreground: light-dark(rgb(255 255 255), rgb(13 13 13));
+  --secondary: light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%));
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: light-dark(
+    rgb(26 28 31 / 49.4%),
+    rgb(255 255 255 / 49.8%)
+  );
+  --accent: light-dark(rgb(229 242 255), rgb(13 39 63));
+  --accent-foreground: var(--primary);
+  --destructive: light-dark(rgb(226 85 7), rgb(255 133 73));
+  --border: light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%));
+  --input: light-dark(
+    rgb(26 28 31 / 11.8%),
+    color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+  );
+  --ring: light-dark(rgb(51 156 255), rgb(131 195 255 / 76%));
+  --font-size-base: 14px;
+  --red: light-dark(rgb(186 38 35), rgb(250 66 62));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, "Segoe UI", sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: 10px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cpath d='M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z'/%3E%3C/svg%3E");
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+  --color-background-primary: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-border-secondary: var(--border);
+}
+
+:root[data-visualize-standalone] {
+  background-color: var(--background) !important;
+}
+
+/* Generic mobile code-block hosts provide light/dark mode but no series palette.
+   AppBlock hosts set all six variables themselves. */
+:root:not([data-app-block-surface]) {
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(#f3883b, #f59a56);
+  --viz-series-3: light-dark(#5dc977, #74d58b);
+  --viz-series-4: light-dark(#eb77b1, #f08fc0);
+  --viz-series-5: light-dark(#9b79ec, #aa91ef);
+  --viz-series-6: light-dark(#3ab9b1, #5acbc2);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html > body {
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+:root:not([data-app-block-surface]) > body {
+  padding: 12px;
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive > .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align="right"]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align="center"]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget > :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The bundled tooltip runtime owns [data-tooltip]. AppBlock's CSS-only
+   pseudo-tooltip can widen dense grids even while hidden. */
+main [data-tooltip]::after {
+  content: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls > .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls > .form-label > :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--interactive-label-primary-default, var(--primary-foreground));
+  background: var(--interactive-bg-primary-default, var(--foreground));
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(
+    in srgb,
+    var(--interactive-label-primary-default, var(--primary-foreground)) 50%,
+    transparent
+  );
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type="file"] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type="file"]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type="file"]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type="color"] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type="checkbox"]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type="checkbox"]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: "";
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type="radio"]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: "";
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed="true"],
+    [aria-selected="true"],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed="true"], [aria-selected="true"], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget > svg {
+  width: 100%;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+</style>
+</head>
+<body>
+<div id="decoding-lab">
+  <div class="dl-context">
+    <div>
+      <div class="text-small text-muted">ONE NEXT-TOKEN DECISION</div>
+      <div class="dl-prompt"><span>The support ticket category is</span><strong id="dl-completion">…</strong></div>
+    </div>
+    <div class="viz-controls" aria-label="Animation controls">
+      <button class="btn btn-primary" id="dl-play" type="button">Play</button>
+      <button class="btn" id="dl-step" type="button">Next step</button>
+      <button class="btn" id="dl-sample" type="button">Sample token</button>
+      <button class="btn btn-ghost" id="dl-reset" type="button">Reset</button>
+      <label class="form-label" for="dl-speed">Speed
+        <select class="form-select" id="dl-speed">
+          <option value="0.75">0.75×</option>
+          <option value="1" selected>1×</option>
+          <option value="1.5">1.5×</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <ol class="dl-pipeline" aria-label="Decoding pipeline">
+    <li data-pipe="0"><span>1</span><b>Logits</b></li>
+    <li data-pipe="1"><span>2</span><b>Temperature</b></li>
+    <li data-pipe="2"><span>3</span><b>Softmax</b></li>
+    <li data-pipe="3"><span>4</span><b>Top-K</b></li>
+    <li data-pipe="4"><span>5</span><b>Top-P</b></li>
+    <li data-pipe="5"><span>6</span><b>Renormalize</b></li>
+    <li data-pipe="6"><span>7</span><b>Sample</b></li>
+  </ol>
+
+  <section class="card dl-stage" aria-labelledby="dl-stage-title">
+    <div class="dl-stage-head">
+      <div>
+        <span class="viz-badge" id="dl-step-label">Step 1 of 7</span>
+        <h2 id="dl-stage-title">The model emits logits</h2>
+        <p id="dl-stage-copy">Raw scores rank candidates. They are not probabilities and do not need to sum to anything.</p>
+      </div>
+      <code id="dl-formula">z = [2.40, 1.70, 0.90, 0.30, −0.20]</code>
+    </div>
+
+    <div class="dl-chart" role="img" aria-labelledby="dl-stage-title" aria-describedby="dl-chart-summary">
+      <div class="dl-chart-head" aria-hidden="true">
+        <span>Candidate token</span><span id="dl-value-heading">Raw score</span><span>Visual weight</span><span>Decision</span>
+      </div>
+      <div id="dl-rows"></div>
+      <p class="sr-only" id="dl-chart-summary"></p>
+    </div>
+
+    <div class="dl-sampler" id="dl-sampler" hidden>
+      <div class="dl-sampler-head"><span>Final probability intervals</span><strong id="dl-draw-label">Press “Sample token”</strong></div>
+      <div class="dl-sample-track" id="dl-sample-track" aria-label="Final sampling distribution">
+        <div class="dl-segments" id="dl-segments"></div>
+        <span class="dl-marker" id="dl-marker" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="dl-result" aria-live="polite">
+      <strong id="dl-result-title">Highest raw score: ACCESS</strong>
+      <span id="dl-result-copy">A larger logit means stronger model preference at this position—not correctness.</span>
+    </div>
+  </section>
+
+  <div class="viz-controls dl-parameters" aria-label="Decoding parameters">
+    <label class="form-label" for="dl-temperature">
+      <span>Temperature <output id="dl-temperature-value">1.0</output></span>
+      <input class="form-range" id="dl-temperature" type="range" min="0.2" max="2" step="0.1" value="1">
+    </label>
+    <label class="form-label" for="dl-top-k">
+      <span>Top-K <output id="dl-top-k-value">4</output></span>
+      <input class="form-range" id="dl-top-k" type="range" min="1" max="5" step="1" value="4">
+    </label>
+    <label class="form-label" for="dl-top-p">
+      <span>Top-P <output id="dl-top-p-value">0.80</output></span>
+      <input class="form-range" id="dl-top-p" type="range" min="0.2" max="1" step="0.05" value="0.8">
+    </label>
+  </div>
+
+  <div class="dl-footer">
+    <span id="dl-order">Lab order: temperature → softmax → top-k → top-p → renormalize → sample.</span>
+    <span id="dl-history" class="text-muted">No samples yet.</span>
+    <span class="dl-reads">Read: <a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.softmax.html" target="_blank" rel="noreferrer">Softmax</a> · <a href="https://arxiv.org/abs/1904.09751" target="_blank" rel="noreferrer">Nucleus sampling</a> · <a href="https://huggingface.co/docs/transformers/main/en/generation_strategies" target="_blank" rel="noreferrer">Generation strategies</a></span>
+  </div>
+</div>
+
+<style>
+  #decoding-lab {
+    display: grid;
+    gap: 14px;
+    width: 100%;
+    color: var(--foreground);
+    background: transparent;
+  }
+
+  #decoding-lab .dl-context {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  #decoding-lab .dl-prompt {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 3px;
+  }
+
+  #decoding-lab .dl-prompt strong {
+    color: var(--accent-foreground);
+  }
+
+  #decoding-lab .dl-context .viz-controls {
+    margin-left: auto;
+  }
+
+  #decoding-lab .dl-context .form-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #decoding-lab .dl-context .form-select {
+    width: auto;
+  }
+
+  #decoding-lab .dl-pipeline {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #decoding-lab .dl-pipeline li {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 5px;
+    min-width: 0;
+    color: var(--muted-foreground);
+    text-align: center;
+  }
+
+  #decoding-lab .dl-pipeline li:not(:last-child)::after {
+    position: absolute;
+    top: 13px;
+    left: calc(50% + 17px);
+    width: calc(100% - 26px);
+    height: 2px;
+    content: "";
+    background: var(--border);
+  }
+
+  #decoding-lab .dl-pipeline span {
+    z-index: 1;
+    display: grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--muted-foreground);
+    background: var(--background);
+  }
+
+  #decoding-lab .dl-pipeline b {
+    overflow-wrap: anywhere;
+  }
+
+  #decoding-lab .dl-pipeline li.is-done,
+  #decoding-lab .dl-pipeline li.is-active {
+    color: var(--foreground);
+  }
+
+  #decoding-lab .dl-pipeline li.is-done span {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  #decoding-lab .dl-pipeline li.is-active span {
+    border-color: var(--primary);
+    color: var(--primary-foreground);
+    background: var(--primary);
+  }
+
+  #decoding-lab .dl-stage {
+    display: grid;
+    gap: 16px;
+  }
+
+  #decoding-lab .dl-stage-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 18px;
+    align-items: start;
+  }
+
+  #decoding-lab .dl-stage-head h2 {
+    margin-top: 8px;
+  }
+
+  #decoding-lab .dl-stage-head p {
+    max-width: 760px;
+  }
+
+  #decoding-lab .dl-stage-head code {
+    align-self: center;
+    max-width: 430px;
+    padding: 9px 11px;
+    overflow-wrap: anywhere;
+  }
+
+  #decoding-lab .dl-chart {
+    display: grid;
+    gap: 5px;
+  }
+
+  #decoding-lab .dl-chart-head,
+  #decoding-lab .dl-row {
+    display: grid;
+    grid-template-columns: minmax(92px, .8fr) minmax(105px, .8fr) minmax(180px, 2fr) minmax(104px, .85fr);
+    gap: 12px;
+    align-items: center;
+  }
+
+  #decoding-lab .dl-chart-head {
+    padding: 0 8px 6px;
+    color: var(--muted-foreground);
+  }
+
+  #decoding-lab .dl-row {
+    min-height: 44px;
+    padding: 7px 8px;
+    border-top: 1px solid var(--border);
+    transition: opacity 180ms ease, background-color 180ms ease;
+  }
+
+  #decoding-lab .dl-row.is-removed {
+    opacity: .42;
+  }
+
+  #decoding-lab .dl-row.is-selected {
+    background: var(--accent);
+  }
+
+  #decoding-lab .dl-token {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  #decoding-lab .dl-token-dot {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--viz-series-1);
+  }
+
+  #decoding-lab .dl-row:nth-child(2) .dl-token-dot,
+  #decoding-lab .dl-row:nth-child(2) .dl-fill,
+  #decoding-lab .dl-segment:nth-child(2) { background: var(--viz-series-2); }
+  #decoding-lab .dl-row:nth-child(3) .dl-token-dot,
+  #decoding-lab .dl-row:nth-child(3) .dl-fill,
+  #decoding-lab .dl-segment:nth-child(3) { background: var(--viz-series-3); }
+  #decoding-lab .dl-row:nth-child(4) .dl-token-dot,
+  #decoding-lab .dl-row:nth-child(4) .dl-fill,
+  #decoding-lab .dl-segment:nth-child(4) { background: var(--viz-series-4); }
+  #decoding-lab .dl-row:nth-child(5) .dl-token-dot,
+  #decoding-lab .dl-row:nth-child(5) .dl-fill,
+  #decoding-lab .dl-segment:nth-child(5) { background: var(--viz-series-5); }
+
+  #decoding-lab .dl-token code {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #decoding-lab .dl-number {
+    font-variant-numeric: tabular-nums;
+  }
+
+  #decoding-lab .dl-bar {
+    position: relative;
+    height: 16px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--muted);
+  }
+
+  #decoding-lab .dl-fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--viz-series-1);
+    transition: width 430ms cubic-bezier(.2, .8, .2, 1);
+  }
+
+  #decoding-lab .dl-decision {
+    color: var(--muted-foreground);
+  }
+
+  #decoding-lab .dl-decision.is-kept,
+  #decoding-lab .dl-decision.is-picked {
+    color: var(--foreground);
+  }
+
+  #decoding-lab .dl-sampler {
+    display: grid;
+    gap: 8px;
+  }
+
+  #decoding-lab .dl-sampler[hidden] {
+    display: none;
+  }
+
+  #decoding-lab .dl-sampler-head,
+  #decoding-lab .dl-result,
+  #decoding-lab .dl-footer {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  #decoding-lab .dl-sample-track {
+    position: relative;
+    height: 34px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--muted);
+  }
+
+  #decoding-lab .dl-segments {
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
+
+  #decoding-lab .dl-segment {
+    display: grid;
+    min-width: 0;
+    height: 100%;
+    place-items: center;
+    overflow: hidden;
+    color: var(--primary-foreground);
+    background: var(--viz-series-1);
+  }
+
+  #decoding-lab .dl-segment span {
+    padding: 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #decoding-lab .dl-marker {
+    position: absolute;
+    z-index: 2;
+    top: -3px;
+    bottom: -3px;
+    left: 0;
+    width: 3px;
+    background: var(--foreground);
+    box-shadow: 0 0 0 2px var(--background);
+    transition: left 680ms cubic-bezier(.2, .8, .2, 1);
+  }
+
+  #decoding-lab .dl-result {
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  #decoding-lab .dl-result span {
+    color: var(--muted-foreground);
+  }
+
+  #decoding-lab .dl-parameters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+  }
+
+  #decoding-lab .dl-parameters .form-label {
+    display: grid;
+    gap: 5px;
+  }
+
+  #decoding-lab .dl-parameters .form-label span {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  #decoding-lab .dl-parameters output {
+    font-variant-numeric: tabular-nums;
+  }
+
+  #decoding-lab .dl-footer {
+    padding-top: 2px;
+  }
+
+  #decoding-lab .dl-reads {
+    margin-left: auto;
+  }
+
+  @media (max-width: 760px) {
+    #decoding-lab .dl-pipeline {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      row-gap: 12px;
+    }
+
+    #decoding-lab .dl-pipeline li::after {
+      display: none;
+    }
+
+    #decoding-lab .dl-stage-head {
+      grid-template-columns: 1fr;
+    }
+
+    #decoding-lab .dl-stage-head code {
+      justify-self: start;
+    }
+
+    #decoding-lab .dl-chart-head {
+      display: none;
+    }
+
+    #decoding-lab .dl-row {
+      grid-template-columns: minmax(100px, 1fr) minmax(80px, .7fr);
+      gap: 7px 12px;
+    }
+
+    #decoding-lab .dl-bar {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    #decoding-lab .dl-decision {
+      text-align: right;
+    }
+
+    #decoding-lab .dl-parameters {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 430px) {
+    #decoding-lab .dl-pipeline {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #decoding-lab .dl-context .viz-controls {
+      margin-left: 0;
+    }
+
+    #decoding-lab .dl-segment span {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #decoding-lab .dl-fill,
+    #decoding-lab .dl-marker,
+    #decoding-lab .dl-row {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    "use strict";
+
+    const root = document.getElementById("decoding-lab");
+    if (!root) return;
+
+    const candidates = [
+      { token: "ACCESS", logit: 2.4 },
+      { token: "BILLING", logit: 1.7 },
+      { token: "BUG", logit: 0.9 },
+      { token: "OTHER", logit: 0.3 },
+      { token: "REFUND", logit: -0.2 }
+    ];
+
+    const stages = [
+      {
+        title: "The model emits logits",
+        copy: "Raw scores rank candidates. They are not probabilities and do not need to sum to anything.",
+        formula: "z = [2.40, 1.70, 0.90, 0.30, −0.20]",
+        heading: "Raw score"
+      },
+      {
+        title: "Temperature reshapes the logits",
+        copy: "Divide every logit by T. Lower T separates scores; higher T compresses them.",
+        formula: "adjusted logit = zᵢ / T",
+        heading: "zᵢ / T"
+      },
+      {
+        title: "Softmax creates a distribution",
+        copy: "Exponentiate the adjusted logits and normalize them. Every value is now between 0 and 1, and the total is 100%.",
+        formula: "P(i) = exp(zᵢ/T) / Σⱼ exp(zⱼ/T)",
+        heading: "Probability"
+      },
+      {
+        title: "Top-K keeps a fixed number",
+        copy: "Keep only the K highest-probability candidates. K controls pool size, not probability mass.",
+        formula: "eligible = K largest P(i)",
+        heading: "Probability"
+      },
+      {
+        title: "Top-P keeps enough probability mass",
+        copy: "Inside this lab’s top-k pool, add sorted candidates until cumulative probability reaches p.",
+        formula: "smallest sorted set with cumulative mass ≥ p",
+        heading: "Pool mass · cumulative"
+      },
+      {
+        title: "Renormalization restores 100%",
+        copy: "Removed candidates become zero. The surviving probabilities are rescaled so the eligible pool sums to 100%.",
+        formula: "P′(i) = P(i) / Σ P(eligible)",
+        heading: "Final probability"
+      },
+      {
+        title: "Sampling chooses one token",
+        copy: "Draw a random number from 0 to 1 and select the probability interval containing it.",
+        formula: "r ∈ [0,1) → interval → next token",
+        heading: "Final probability"
+      }
+    ];
+
+    const els = {
+      play: root.querySelector("#dl-play"),
+      step: root.querySelector("#dl-step"),
+      sample: root.querySelector("#dl-sample"),
+      reset: root.querySelector("#dl-reset"),
+      speed: root.querySelector("#dl-speed"),
+      temp: root.querySelector("#dl-temperature"),
+      tempValue: root.querySelector("#dl-temperature-value"),
+      topK: root.querySelector("#dl-top-k"),
+      topKValue: root.querySelector("#dl-top-k-value"),
+      topP: root.querySelector("#dl-top-p"),
+      topPValue: root.querySelector("#dl-top-p-value"),
+      stepLabel: root.querySelector("#dl-step-label"),
+      title: root.querySelector("#dl-stage-title"),
+      copy: root.querySelector("#dl-stage-copy"),
+      formula: root.querySelector("#dl-formula"),
+      valueHeading: root.querySelector("#dl-value-heading"),
+      rows: root.querySelector("#dl-rows"),
+      summary: root.querySelector("#dl-chart-summary"),
+      sampler: root.querySelector("#dl-sampler"),
+      segments: root.querySelector("#dl-segments"),
+      marker: root.querySelector("#dl-marker"),
+      drawLabel: root.querySelector("#dl-draw-label"),
+      resultTitle: root.querySelector("#dl-result-title"),
+      resultCopy: root.querySelector("#dl-result-copy"),
+      completion: root.querySelector("#dl-completion"),
+      history: root.querySelector("#dl-history")
+    };
+
+    const state = {
+      stage: 0,
+      playing: false,
+      timer: null,
+      selected: null,
+      draw: null,
+      samples: []
+    };
+
+    function softmax(values) {
+      const max = Math.max.apply(null, values);
+      const exps = values.map(function (value) { return Math.exp(value - max); });
+      const total = exps.reduce(function (sum, value) { return sum + value; }, 0);
+      return exps.map(function (value) { return value / total; });
+    }
+
+    function compute() {
+      const temperature = Number(els.temp.value);
+      const topK = Number(els.topK.value);
+      const topP = Number(els.topP.value);
+      const adjusted = candidates.map(function (candidate) { return candidate.logit / temperature; });
+      const probs = softmax(adjusted);
+      const topKSet = new Set(candidates.slice(0, topK).map(function (_, index) { return index; }));
+      const topKMass = probs.reduce(function (sum, probability, index) {
+        return sum + (topKSet.has(index) ? probability : 0);
+      }, 0);
+      const poolProbs = probs.map(function (probability, index) {
+        return topKSet.has(index) ? probability / topKMass : 0;
+      });
+      const topPSet = new Set();
+      const cumulative = new Array(candidates.length).fill(null);
+      let running = 0;
+      let reachedTopP = false;
+      for (let index = 0; index < topK; index += 1) {
+        running += poolProbs[index];
+        cumulative[index] = running;
+        if (!reachedTopP) topPSet.add(index);
+        if (running >= topP - 1e-12) reachedTopP = true;
+      }
+      const eligibleMass = probs.reduce(function (sum, probability, index) {
+        return sum + (topPSet.has(index) ? probability : 0);
+      }, 0);
+      const finalProbs = probs.map(function (probability, index) {
+        return topPSet.has(index) ? probability / eligibleMass : 0;
+      });
+      return {
+        temperature: temperature,
+        topK: topK,
+        topP: topP,
+        adjusted: adjusted,
+        probs: probs,
+        topKSet: topKSet,
+        topKMass: topKMass,
+        poolProbs: poolProbs,
+        topPSet: topPSet,
+        cumulative: cumulative,
+        finalProbs: finalProbs
+      };
+    }
+
+    function percent(value) {
+      return (value * 100).toFixed(1) + "%";
+    }
+
+    function temperatureDescription(value) {
+      if (value < 1) return "T=" + value.toFixed(1) + " sharpens the distribution; it does not make the answer more correct.";
+      if (value > 1) return "T=" + value.toFixed(1) + " flattens the distribution; lower-ranked tokens receive more probability.";
+      return "At T=1.0 the logits are unchanged before softmax.";
+    }
+
+    function scoreWidths(values) {
+      return values.map(function (value) {
+        return 100 / (1 + Math.exp(-value));
+      });
+    }
+
+    function rowPresentation(index, data) {
+      const stage = state.stage;
+      if (stage === 0) {
+        return { value: candidates[index].logit.toFixed(2), width: scoreWidths(candidates.map(function (c) { return c.logit; }))[index], decision: index === 0 ? "highest" : "raw score", removed: false };
+      }
+      if (stage === 1) {
+        return { value: data.adjusted[index].toFixed(2), width: scoreWidths(data.adjusted)[index], decision: data.temperature < 1 ? "spread apart" : data.temperature > 1 ? "compressed" : "unchanged", removed: false };
+      }
+      if (stage === 2) {
+        return { value: percent(data.probs[index]), width: data.probs[index] * 100, decision: "included", removed: false };
+      }
+      if (stage === 3) {
+        const kept = data.topKSet.has(index);
+        return { value: percent(data.probs[index]), width: data.probs[index] * 100, decision: kept ? "kept by top-k" : "removed", removed: !kept };
+      }
+      if (stage === 4) {
+        const inK = data.topKSet.has(index);
+        const keptP = data.topPSet.has(index);
+        const value = inK ? percent(data.poolProbs[index]) + " · " + percent(data.cumulative[index]) : "—";
+        return { value: value, width: inK ? data.poolProbs[index] * 100 : 0, decision: keptP ? "inside nucleus" : "removed", removed: !keptP };
+      }
+      const kept = data.topPSet.has(index);
+      return {
+        value: percent(data.finalProbs[index]),
+        width: data.finalProbs[index] * 100,
+        decision: stage === 6 && state.selected === index ? "selected" : kept ? "eligible" : "removed",
+        removed: !kept,
+        selected: stage === 6 && state.selected === index
+      };
+    }
+
+    function renderRows(data) {
+      els.rows.innerHTML = "";
+      candidates.forEach(function (candidate, index) {
+        const view = rowPresentation(index, data);
+        const row = document.createElement("div");
+        row.className = "dl-row" + (view.removed ? " is-removed" : "") + (view.selected ? " is-selected" : "");
+        const decisionClass = view.selected ? " is-picked" : !view.removed && state.stage >= 3 ? " is-kept" : "";
+        row.innerHTML =
+          '<div class="dl-token"><span class="dl-token-dot" aria-hidden="true"></span><code>' + candidate.token + '</code></div>' +
+          '<span class="dl-number">' + view.value + '</span>' +
+          '<div class="dl-bar" aria-hidden="true"><span class="dl-fill" style="width:' + Math.max(0, view.width).toFixed(2) + '%"></span></div>' +
+          '<span class="dl-decision' + decisionClass + '">' + view.decision + '</span>';
+        els.rows.appendChild(row);
+      });
+    }
+
+    function resultForStage(data) {
+      if (state.stage === 0) {
+        return ["Highest raw score: ACCESS", "A larger logit means stronger model preference at this position—not correctness."];
+      }
+      if (state.stage === 1) {
+        return ["Temperature changes concentration", temperatureDescription(data.temperature)];
+      }
+      if (state.stage === 2) {
+        const total = data.probs.reduce(function (sum, value) { return sum + value; }, 0);
+        return ["Probability total: " + percent(total), "Softmax makes a distribution; it does not verify truth, safety, or policy compliance."];
+      }
+      if (state.stage === 3) {
+        return ["Top-K keeps " + data.topK + " token" + (data.topK === 1 ? "" : "s"), "The kept pool contains " + percent(data.topKMass) + " of the original softmax mass before renormalization."];
+      }
+      if (state.stage === 4) {
+        const count = data.topPSet.size;
+        const last = count - 1;
+        return ["Top-P keeps " + count + " token" + (count === 1 ? "" : "s"), "The smallest pool reaches " + percent(data.cumulative[last]) + " inside the top-k pool, meeting p=" + data.topP.toFixed(2) + "."];
+      }
+      if (state.stage === 5) {
+        const total = data.finalProbs.reduce(function (sum, value) { return sum + value; }, 0);
+        return ["Eligible probability total: " + percent(total), "Only surviving tokens can now be sampled; removed candidates have probability 0% in this lab."];
+      }
+      if (state.selected === null) {
+        return ["Ready to sample", "Press “Sample token” to draw from the final distribution."];
+      }
+      return ["Selected: " + candidates[state.selected].token, "Random draw r=" + state.draw.toFixed(3) + " landed in its " + percent(data.finalProbs[state.selected]) + " probability interval."];
+    }
+
+    function renderSegments(data) {
+      els.segments.innerHTML = "";
+      candidates.forEach(function (candidate, index) {
+        if (data.finalProbs[index] <= 0) return;
+        const segment = document.createElement("div");
+        segment.className = "dl-segment";
+        segment.style.width = (data.finalProbs[index] * 100).toFixed(4) + "%";
+        segment.innerHTML = "<span>" + candidate.token + " " + percent(data.finalProbs[index]) + "</span>";
+        els.segments.appendChild(segment);
+      });
+    }
+
+    function renderHistory() {
+      if (!state.samples.length) {
+        els.history.textContent = "No samples yet.";
+        return;
+      }
+      const counts = new Map();
+      state.samples.forEach(function (index) {
+        counts.set(index, (counts.get(index) || 0) + 1);
+      });
+      const summary = Array.from(counts.entries()).map(function (entry) {
+        return candidates[entry[0]].token + " ×" + entry[1];
+      }).join(" · ");
+      els.history.textContent = "Recent samples (" + state.samples.length + "): " + summary;
+    }
+
+    function render() {
+      const data = compute();
+      const stage = stages[state.stage];
+      els.tempValue.value = data.temperature.toFixed(1);
+      els.tempValue.textContent = data.temperature.toFixed(1);
+      els.topKValue.value = String(data.topK);
+      els.topKValue.textContent = String(data.topK);
+      els.topPValue.value = data.topP.toFixed(2);
+      els.topPValue.textContent = data.topP.toFixed(2);
+      els.stepLabel.textContent = "Step " + (state.stage + 1) + " of " + stages.length;
+      els.title.textContent = stage.title;
+      els.copy.textContent = stage.copy;
+      els.formula.textContent = stage.formula;
+      els.valueHeading.textContent = stage.heading;
+      root.querySelectorAll("[data-pipe]").forEach(function (node) {
+        const index = Number(node.getAttribute("data-pipe"));
+        node.classList.toggle("is-done", index < state.stage);
+        node.classList.toggle("is-active", index === state.stage);
+      });
+      renderRows(data);
+      renderSegments(data);
+      els.sampler.hidden = state.stage !== 6;
+      if (state.stage !== 6) {
+        els.completion.textContent = "…";
+      } else if (state.selected === null) {
+        els.completion.textContent = "?";
+      } else {
+        els.completion.textContent = candidates[state.selected].token;
+      }
+      const result = resultForStage(data);
+      els.resultTitle.textContent = result[0];
+      els.resultCopy.textContent = result[1];
+      els.summary.textContent = candidates.map(function (candidate, index) {
+        const view = rowPresentation(index, data);
+        return candidate.token + ": " + view.value + ", " + view.decision;
+      }).join(". ");
+      renderHistory();
+    }
+
+    function sampleToken(animate) {
+      const data = compute();
+      const draw = Math.random();
+      let running = 0;
+      let selected = data.finalProbs.findIndex(function (probability) {
+        running += probability;
+        return draw < running;
+      });
+      if (selected < 0) {
+        selected = data.finalProbs.reduce(function (best, probability, index) {
+          return probability > 0 ? index : best;
+        }, 0);
+      }
+      state.draw = draw;
+      state.selected = selected;
+      state.samples.push(selected);
+      if (state.samples.length > 20) state.samples.shift();
+      render();
+      els.drawLabel.textContent = "r=" + draw.toFixed(3) + " → " + candidates[selected].token;
+      if (animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        els.marker.style.transition = "none";
+        els.marker.style.left = "0%";
+        void els.marker.offsetWidth;
+        els.marker.style.transition = "left 680ms cubic-bezier(.2, .8, .2, 1)";
+      }
+      requestAnimationFrame(function () {
+        els.marker.style.left = (draw * 100).toFixed(3) + "%";
+      });
+    }
+
+    function stop() {
+      state.playing = false;
+      if (state.timer) window.clearTimeout(state.timer);
+      state.timer = null;
+      els.play.textContent = "Play";
+      els.play.setAttribute("aria-pressed", "false");
+    }
+
+    function schedule() {
+      if (!state.playing) return;
+      const speed = Number(els.speed.value);
+      state.timer = window.setTimeout(function () {
+        if (state.stage >= stages.length - 1) {
+          stop();
+          return;
+        }
+        state.stage += 1;
+        state.selected = null;
+        state.draw = null;
+        render();
+        if (state.stage === stages.length - 1) sampleToken(true);
+        schedule();
+      }, 1450 / speed);
+    }
+
+    function play() {
+      if (state.playing) {
+        stop();
+        return;
+      }
+      if (state.stage >= stages.length - 1) {
+        state.stage = 0;
+        state.selected = null;
+        state.draw = null;
+        els.marker.style.left = "0%";
+        render();
+      }
+      state.playing = true;
+      els.play.textContent = "Pause";
+      els.play.setAttribute("aria-pressed", "true");
+      schedule();
+    }
+
+    function nextStep() {
+      stop();
+      state.stage = (state.stage + 1) % stages.length;
+      state.selected = null;
+      state.draw = null;
+      els.marker.style.left = "0%";
+      render();
+      if (state.stage === stages.length - 1) sampleToken(true);
+    }
+
+    function reset() {
+      stop();
+      els.temp.value = "1";
+      els.topK.value = "4";
+      els.topP.value = "0.8";
+      els.speed.value = "1";
+      state.stage = 0;
+      state.selected = null;
+      state.draw = null;
+      state.samples = [];
+      els.marker.style.left = "0%";
+      els.drawLabel.textContent = "Press “Sample token”";
+      render();
+    }
+
+    function parametersChanged() {
+      stop();
+      state.selected = null;
+      state.draw = null;
+      els.marker.style.left = "0%";
+      els.drawLabel.textContent = "Press “Sample token”";
+      render();
+    }
+
+    els.play.addEventListener("click", play);
+    els.step.addEventListener("click", nextStep);
+    els.sample.addEventListener("click", function () {
+      stop();
+      state.stage = stages.length - 1;
+      sampleToken(true);
+    });
+    els.reset.addEventListener("click", reset);
+    els.speed.addEventListener("change", function () {
+      if (state.playing) {
+        if (state.timer) window.clearTimeout(state.timer);
+        schedule();
+      }
+    });
+    els.temp.addEventListener("input", parametersChanged);
+    els.topK.addEventListener("input", parametersChanged);
+    els.topP.addEventListener("input", parametersChanged);
+
+    render();
+  }());
+</script>
+
+<script id="codex-visualization-floating-ui-core" src="https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js"></script>
+<script id="codex-visualization-floating-ui-dom" src="https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js"></script>
+<script id="codex-visualization-lucide" async src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js"></script>
+<script id="codex-visualization-tooltip">/* oxlint-disable typescript/no-unsafe-argument, typescript/no-unsafe-call, typescript/no-unsafe-return */
+// Runs inside the visualization sandbox, not the host webview.
+(() => {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set(["top", "right", "bottom", "left"]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =>
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest("[data-tooltip]")
+      : null;
+  const containsTarget = (trigger, target) =>
+    target?.nodeType != null && trigger.contains(target);
+  const getContent = (trigger) =>
+    trigger.getAttribute("data-tooltip")?.trim() ?? "";
+  const getPlacement = (trigger) => {
+    const placement = trigger.getAttribute("data-tooltip-placement");
+    return tooltipPlacements.has(placement) ? placement : "top";
+  };
+  const getTooltip = () => {
+    if (tooltip == null) {
+      tooltip = document.createElement("div");
+      tooltip.id = tooltipId;
+      tooltip.className = "tooltip";
+      tooltip.setAttribute("role", "tooltip");
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) => {
+    const ids = new Set(
+      (trigger.getAttribute("aria-describedby") ?? "")
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute("aria-describedby");
+    } else {
+      trigger.setAttribute("aria-describedby", [...ids].join(" "));
+    }
+  };
+  const clearOpenTimeout = () => {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) => {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) => {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              "--tooltip-available-width",
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              "--tooltip-available-height",
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: "fixed",
+    })
+      .then(({ x, y }) => {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = "visible";
+      })
+      .catch(() => {
+        if (activeTrigger === trigger && request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) => {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = "hidden";
+    floating.style.transform = "translate(0, 0)";
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () => {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) => {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() < skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() => {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) => {
+    if (event.pointerType === "touch") {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) => {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) => {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(":focus-visible")) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) => {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () => {
+    closeTooltip(false);
+    document.removeEventListener("pointerover", handlePointerOpen);
+    document.removeEventListener("pointerout", handleLeave);
+    document.removeEventListener("focusin", handleFocusIn);
+    document.removeEventListener("focusout", handleLeave);
+    document.removeEventListener("keydown", handleKeyDown);
+    document.removeEventListener("contextmenu", handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener("pointerover", handlePointerOpen);
+  document.addEventListener("pointerout", handleLeave);
+  document.addEventListener("focusin", handleFocusIn);
+  document.addEventListener("focusout", handleLeave);
+  document.addEventListener("keydown", handleKeyDown);
+  document.addEventListener("contextmenu", handleContextMenu);
+  window.addEventListener("pagehide", destroy, { once: true });
+})();
+</script>
+<script id="codex-visualization-lucide-initialization">(() => {
+  const initialize = () => {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById("codex-visualization-lucide")
+    ?.addEventListener("load", initialize, { once: true });
+})();
+</script>
+</body>
+</html>
