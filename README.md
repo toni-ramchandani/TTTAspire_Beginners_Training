@@ -7,9 +7,6 @@ Evaluation curriculum.
 
 - [`beginner/day-01/index.html`](beginner/day-01/index.html) — standalone
   Technical Story Engine for **GenAI & LLM Foundations for QA**.
-- [`beginner/day-01/narration.md`](beginner/day-01/narration.md) — complete
-  story-led trainer narration, scene-level sources, delivery cues and source
-  ledger.
 - [`beginner/day-01/lab/`](beginner/day-01/lab/) — runnable five-run variance
   lab with an offline fallback and deterministic tests.
 
