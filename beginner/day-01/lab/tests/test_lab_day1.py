@@ -20,10 +20,12 @@ class Day1LabTests(unittest.TestCase):
         cls.report = lab_day1.analyze(cls.outputs, cls.case, cls.labels)
 
     def test_cached_fixture_contains_five_runs(self) -> None:
+        """Test that the cached fixture contains exactly five runs with labels."""
         self.assertEqual(len(self.outputs), 5)
         self.assertEqual(len(self.labels), 5)
 
     def test_prepared_expected_metrics(self) -> None:
+        """Test that the prepared fixture produces expected metrics."""
         self.assertEqual(self.report["unique_output_rate"], 1.0)
         self.assertEqual(self.report["format_validity_rate"], 0.8)
         self.assertTrue(
@@ -37,15 +39,18 @@ class Day1LabTests(unittest.TestCase):
         self.assertEqual(self.report["semantic_correctness_rate"], 0.6)
 
     def test_markdown_fenced_json_is_raw_format_failure(self) -> None:
+        """Test that markdown fenced JSON is recognized as raw format failure."""
         self.assertIsNone(lab_day1.parse_raw_json(self.outputs[2]))
 
     def test_valid_json_can_still_be_unsafe(self) -> None:
+        """Test that valid JSON can still fail safety checks (unsafe action)."""
         checks = lab_day1.instruction_checks(self.outputs[3], self.case)
         self.assertIsNotNone(lab_day1.parse_raw_json(self.outputs[3]))
         self.assertFalse(checks["no_completed_action_claim"])
         self.assertFalse(checks["no_credential_delivery_claim"])
 
     def test_text_normalization_does_not_claim_semantic_equivalence(self) -> None:
+        """Test text normalization function behavior."""
         self.assertEqual(lab_day1.normalize(" A  B\n"), "a b")
 
 

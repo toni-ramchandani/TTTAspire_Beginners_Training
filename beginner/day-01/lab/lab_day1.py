@@ -55,6 +55,7 @@ Rules:
 
 @dataclass(frozen=True)
 class RunResult:
+    """Data class to store results from a single LLM run including text output, validity, semantic label, and check results."""
     run: int
     text: str
     format_valid: bool
@@ -63,12 +64,14 @@ class RunResult:
 
 
 def load_case(path: Path = DEFAULT_CASE_PATH) -> dict[str, Any]:
+    """Load and parse the IT helpdesk case JSON file."""
     return json.loads(path.read_text(encoding="utf-8"))
 
 
 def load_cached_outputs(
     path: Path = DEFAULT_CACHE_PATH,
 ) -> tuple[list[str], list[str]]:
+    """Load cached LLM outputs and semantic labels from a JSONL file."""
     records = [
         json.loads(line)
         for line in path.read_text(encoding="utf-8").splitlines()
@@ -86,6 +89,7 @@ def collect_live_outputs(
     sampling_mode: str,
     sampling_value: float,
 ) -> list[str]:
+    """Collect LLM outputs by making live API calls to the OpenAI Responses API."""
     # Imported lazily so the prepared offline lab needs only the standard library.
     from openai import OpenAI
 
@@ -127,6 +131,7 @@ def collect_live_outputs(
 
 
 def parse_raw_json(text: str) -> dict[str, Any] | None:
+    """Parse raw JSON text and return a dictionary or None if parsing fails."""
     try:
         value = json.loads(text)
     except json.JSONDecodeError:
@@ -135,6 +140,7 @@ def parse_raw_json(text: str) -> dict[str, Any] | None:
 
 
 def instruction_checks(text: str, case: dict[str, Any]) -> dict[str, bool]:
+    """Check if the LLM output adheres to the specified instructions and business rules."""
     obj = parse_raw_json(text)
     check_names = (
         "exact_key_set",
@@ -199,10 +205,12 @@ def instruction_checks(text: str, case: dict[str, Any]) -> dict[str, bool]:
 
 
 def normalize(text: str) -> str:
+    """Normalize text by converting to lowercase and removing extra whitespace."""
     return " ".join(text.lower().split())
 
 
 def validate_semantic_labels(labels: Iterable[str], count: int) -> list[str]:
+    """Validate that semantic labels are correct, partial, or unsafe."""
     normalized = [label.strip().lower() for label in labels]
     allowed = {"correct", "partial", "unsafe"}
     if len(normalized) != count:
@@ -218,6 +226,7 @@ def analyze(
     case: dict[str, Any],
     semantic_labels: list[str] | None = None,
 ) -> dict[str, Any]:
+    """Analyze LLM outputs and generate a comprehensive evaluation report."""
     if len(outputs) != RUN_COUNT:
         raise ValueError(f"expected exactly {RUN_COUNT} outputs")
     if semantic_labels is not None:
@@ -282,6 +291,7 @@ def analyze(
 
 
 def write_artifacts(outputs: list[str], report: dict[str, Any], output_dir: Path) -> None:
+    """Write LLM outputs and analysis report to JSONL and JSON files."""
     output_dir.mkdir(parents=True, exist_ok=True)
     with (output_dir / "outputs.jsonl").open("w", encoding="utf-8") as handle:
         for index, text in enumerate(outputs, start=1):
@@ -305,6 +315,7 @@ CHECK_LABELS = {
 
 
 def _rate(value: float) -> str:
+    """Convert a float value to a percentage string with one decimal place."""
     return f"{value:.1%}"
 
 
@@ -314,7 +325,7 @@ def render_rich_report(
     output_dir: Path,
     live: bool,
 ) -> None:
-    """Render the completed evaluation as trainer-friendly terminal output."""
+    """Render the completed evaluation as trainer-friendly terminal output using Rich library."""
     if CONSOLE is None:
         raise RuntimeError("Rich is not available")
 
@@ -469,7 +480,7 @@ def render_rich_report(
 
 
 def render_plain_report(outputs: list[str], report: dict[str, Any]) -> None:
-    """Retain usable output when dependencies have not been installed yet."""
+    """Render the evaluation report in plain text format when Rich dependencies are not available."""
     for index, output in enumerate(outputs, start=1):
         print(f"\n--- RUN {index} ---\n{output}")
     print("\n--- SUMMARY ---")
@@ -477,6 +488,7 @@ def render_plain_report(outputs: list[str], report: dict[str, Any]) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """Build and configure the command-line argument parser."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--live",
@@ -496,6 +508,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    """Main function to orchestrate the LLM evaluation process."""
     args = build_parser().parse_args()
     case = load_case()
     if args.live:

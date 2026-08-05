@@ -1,49 +1,71 @@
-# RAG Project: Payroll MFA Support
+# Payroll MFA RAG and Ragas Evaluation Solution
 
-A small, real retrieval-augmented generation application for the Aspire workshop. It ingests two synthetic policy documents, creates section-level embeddings, retrieves evidence with cosine similarity, asks either OpenAI or local Ollama to answer from that evidence, and saves the complete run as a reusable trace.
+This project contains two explicit layers:
 
-This phase builds the RAG system only. Ragas and DeepEval are deliberately not installed yet; the trace already preserves the evidence they will need in the next phase.
+1. A small retrieval-augmented generation application over two synthetic payroll-MFA documents.
+2. A Ragas 0.4.3 evaluation system that consumes the application's real JSON traces.
 
-## What runs live
+The evaluator does not rebuild the RAG or substitute pre-generated answers. The RAG retrieves,
+generates, cites, and records a trace first. Exact metrics and Ragas score that evidence afterward.
+
+## Architecture
 
 ```mermaid
-flowchart LR
-    A[Two Markdown documents] --> B[Section chunking]
-    B --> C[Provider embeddings]
-    C --> D[NumPy cosine index]
-    Q[Question] --> E[Query embedding]
-    D --> F[Top-k retrieval]
-    E --> F
-    F --> G[Grounded prompt]
-    G --> H[OpenAI or Ollama]
-    H --> I[Answer and JSON trace]
+flowchart TD
+    D[Policy documents] --> C[Section chunks]
+    C --> I[Provider embeddings and NumPy index]
+    Q[Golden question] --> R[Top-k retrieval]
+    I --> R
+    R --> G[Grounded generation]
+    G --> T[Canonical JSON trace]
+    T --> X[Exact ID and citation checks]
+    T --> A[Ragas trace adapter]
+    K[Reference answer and required IDs] --> X
+    K --> A
+    A --> J[Ollama or OpenAI judge]
+    X --> P[JSON and CSV experiment report]
+    J --> P
 ```
 
-Nothing in `results/` is pre-authored. The retrieved chunks and answer are produced during the run.
+The RAG provider and judge provider are separate settings. Supported combinations are:
+
+- Ollama RAG + Ollama judge
+- OpenAI RAG + OpenAI judge
+- Ollama RAG + OpenAI judge
+- OpenAI RAG + Ollama judge
+
+Using an independent judge is often preferable when model self-evaluation could create correlated errors.
 
 ## Project structure
 
 ```text
 RAG_Project/
-├── app.py                     # inspect, build, ask, and demo commands
-├── documents/
-│   ├── SEC-17_payroll_mfa_policy.md
-│   └── OPS-09_payroll_support_runbook.md
-├── rag/
-│   ├── chunking.py            # Markdown -> stable section chunks
-│   ├── config.py              # .env-backed settings
-│   ├── index.py               # persisted cosine-similarity index
-│   ├── models.py              # chunks, retrieval results, canonical trace
-│   ├── pipeline.py            # retrieve -> prompt -> generate -> persist
-│   └── providers.py           # OpenAI and Ollama adapters
-├── storage/                   # generated embedding indexes
-├── results/                   # generated RAG traces
-└── tests/                     # offline tests; no model or API calls
+├── app.py                         # Build, inspect, ask, and demo the RAG
+├── eval_app.py                    # Preflight, run, and saved-trace evaluation CLI
+├── documents/                     # Two synthetic source documents
+├── rag/                           # Chunking, retrieval, providers, pipeline, trace
+├── evaluation/
+│   ├── data/golden_cases.json     # Eight human-owned evaluation cases
+│   ├── dataset.py                 # Dataset and chunk-ID integrity checks
+│   ├── retrieval_metrics.py       # P@k, R@k, F1, Hit, RR, AP, nDCG
+│   ├── deterministic_metrics.py   # Citation and policy checks
+│   ├── judges.py                  # Ollama/OpenAI Ragas adapters and preflight
+│   ├── ragas_runner.py            # Ragas 0.4 collections-based metrics
+│   ├── runner.py                  # Live and saved-trace orchestration
+│   ├── reporting.py               # Macro/micro summaries, CSV/JSON, gates
+│   ├── gates.example.json         # Disabled threshold template
+│   └── results/                   # Generated reports
+├── docs/build_explainer_pdf.py    # Reproducible ReportLab guide generator
+├── tests/                         # Offline application and evaluation tests
+├── requirements.txt               # RAG-only dependencies
+├── requirements-dev.txt           # RAG tests
+├── requirements-eval.txt          # Tested Ragas dependency set
+└── requirements-docs.txt          # Optional PDF-generation dependency
 ```
 
-## 1. Install
+## 1. Installation
 
-Python 3.11 or newer is recommended.
+Use Python 3.11 or 3.12. The tested environment is Python 3.12.13.
 
 ### Windows PowerShell
 
@@ -51,7 +73,7 @@ Python 3.11 or newer is recommended.
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install -r requirements-dev.txt
+pip install -r requirements-eval.txt
 Copy-Item .env.example .env
 ```
 
@@ -61,29 +83,97 @@ Copy-Item .env.example .env
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-pip install -r requirements-dev.txt
+pip install -r requirements-eval.txt
 cp .env.example .env
 ```
 
-## 2A. Run locally with Ollama
+`requirements-eval.txt` deliberately pins `langchain-community==0.3.31`.
+Ragas 0.4.3 unconditionally imports an old VertexAI module that is absent from
+`langchain-community` 0.4.x; an unconstrained install can therefore succeed and then fail on
+`import ragas`. The pin is verified by the test suite and documented in the upstream issue.
 
-Install and start Ollama, then pull one generation model and one embedding model:
+Verify the installation without calling a model:
+
+```bash
+python eval_app.py preflight --judge-provider ollama
+pytest -q
+```
+
+### Why the Ragas judge uses `AsyncOpenAI`
+
+Ragas 0.4 collections metrics expose both `.score()` and `.ascore()`, but the
+synchronous `.score()` method runs the metric's asynchronous scoring pipeline.
+The metric therefore calls the evaluator through `agenerate()` internally. The
+judge bundle must be constructed with `AsyncOpenAI`, including when this CLI is
+invoked synchronously.
+
+This applies to both provider routes:
+
+- OpenAI uses `AsyncOpenAI()` against the default OpenAI endpoint.
+- Ollama uses `AsyncOpenAI(base_url="http://localhost:11434/v1", api_key="ollama")`
+  against Ollama's OpenAI-compatible endpoint.
+
+The modern Ragas embeddings adapter accepts the same asynchronous client and
+bridges synchronous embedding calls where a metric requires them.
+
+Rebuild the explainer PDF (optional):
+
+```bash
+pip install -r requirements-docs.txt
+python docs/build_explainer_pdf.py \
+  --output ../output/pdf/RAGAS_Evaluation_Solution_Ollama_OpenAI.pdf
+```
+
+## 2. Ollama setup
+
+Install and start Ollama, then pull a generation model and embedding model:
 
 ```bash
 ollama pull gemma3:4b
 ollama pull embeddinggemma
 ```
 
-Keep these values in `.env`:
+The same models are the defaults for the RAG and local evaluator. A small judge is convenient for
+learning, but judge quality and structured-output reliability usually improve with a stronger local
+model. Change `RAGAS_OLLAMA_CHAT_MODEL` independently when hardware allows it.
 
-```dotenv
-RAG_PROVIDER=ollama
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_CHAT_MODEL=gemma3:4b
-OLLAMA_EMBEDDING_MODEL=embeddinggemma
+Run a live evaluator preflight:
+
+```bash
+python eval_app.py preflight --judge-provider ollama --live
 ```
 
-Run the application:
+Ragas uses the OpenAI Python client against Ollama's compatible endpoint:
+
+```text
+http://localhost:11434/v1/chat/completions
+http://localhost:11434/v1/embeddings
+```
+
+Ollama ignores the placeholder API key `ollama`. No real credential is sent.
+
+## 3. OpenAI setup
+
+Edit `.env` locally:
+
+```dotenv
+OPENAI_API_KEY=replace-with-your-key
+OPENAI_CHAT_MODEL=gpt-5.6-luna
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+RAGAS_OPENAI_CHAT_MODEL=gpt-5.6-luna
+RAGAS_OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+```
+
+Do not commit `.env`. Then verify both embeddings and structured judge output:
+
+```bash
+python eval_app.py preflight --judge-provider openai --live
+```
+
+The RAG application uses the Responses API for answer generation. Ragas 0.4.3 uses structured
+Chat Completions internally through its Instructor adapter. These are separate SDK paths.
+
+## 4. Run the RAG by itself
 
 ```bash
 python app.py inspect
@@ -91,120 +181,303 @@ python app.py build --provider ollama
 python app.py ask "I changed phones and cannot complete MFA. How do I regain payroll access?" --provider ollama --top-k 3 --show-context
 ```
 
-Ollama's local endpoint does not require authentication. `embeddinggemma` requires Ollama 0.11.10 or newer.
+Every answer creates `results/<run_id>.json` and refreshes `results/latest.json`.
 
-## 2B. Run with the OpenAI API
+## 5. Evaluate through Ollama
 
-Add your key only to the local `.env` file:
-
-```dotenv
-RAG_PROVIDER=openai
-OPENAI_API_KEY=replace-with-your-key
-OPENAI_CHAT_MODEL=gpt-5.6-luna
-OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-```
-
-Then run:
+Run the eight golden cases with the five core Ragas metrics:
 
 ```bash
-python app.py build --provider openai
-python app.py ask "I changed phones and cannot complete MFA. How do I regain payroll access?" --provider openai --top-k 3 --show-context
+python eval_app.py run \
+  --rag-provider ollama \
+  --judge-provider ollama \
+  --top-k 3 \
+  --metric-profile core
 ```
 
-The OpenAI adapter uses `client.embeddings.create(...)` for vectors and `client.responses.create(...)` for generation. Change model names through `.env`; there are no model IDs buried in application logic.
-
-The sample configuration uses `gpt-5.6-luna` because the current OpenAI model guide positions it for cost-sensitive workloads. If that model is not enabled for your project, set `OPENAI_CHAT_MODEL` to a Responses-compatible model available to your account.
-
-## 3. Run all three live questions
+Run the full profile:
 
 ```bash
-python app.py demo --provider ollama --top-k 3
-# or
-python app.py demo --provider openai --top-k 3
+python eval_app.py run \
+  --rag-provider ollama \
+  --judge-provider ollama \
+  --top-k 3 \
+  --metric-profile full
 ```
 
-The questions cover phone replacement, a prohibited manager bypass, and required recovery-ticket fields.
+## 6. Evaluate through OpenAI
 
-## 4. Inspect the generated evidence
+```bash
+python eval_app.py run \
+  --rag-provider openai \
+  --judge-provider openai \
+  --top-k 3 \
+  --metric-profile core
+```
 
-Each run creates `results/<run_id>.json` and refreshes `results/latest.json`. The trace contains:
+Use an independent OpenAI judge for locally generated answers:
+
+```bash
+python eval_app.py run \
+  --rag-provider ollama \
+  --judge-provider openai \
+  --top-k 3 \
+  --metric-profile core
+```
+
+Select cases to reduce cost while debugging:
+
+```bash
+python eval_app.py run \
+  --rag-provider ollama \
+  --judge-provider openai \
+  --case-id MFA-001 \
+  --case-id MFA-006 \
+  --top-k 3
+```
+
+## 7. Evaluate an existing trace
+
+```bash
+python eval_app.py trace \
+  --trace results/latest.json \
+  --case-id MFA-001 \
+  --judge-provider ollama \
+  --metric-profile core
+```
+
+The trace question must exactly match the golden case by default. This prevents accidentally scoring
+an answer against the wrong reference. `--allow-question-mismatch` exists only for deliberate
+paraphrase experiments.
+
+## 8. Run deterministic evaluation without a judge
+
+```bash
+python eval_app.py run \
+  --rag-provider ollama \
+  --top-k 3 \
+  --skip-ragas
+```
+
+In `run` mode this still calls the RAG provider: it retrieves evidence, generates a fresh answer,
+and saves a new trace. It skips judge construction and every Ragas semantic metric, then calculates
+exact retrieval, citation, required-concept, and forbidden-claim checks.
+
+To make evaluation completely model-free, combine `trace` mode with `--skip-ragas`:
+
+```bash
+python eval_app.py trace \
+  --trace results/latest.json \
+  --case-id MFA-001 \
+  --skip-ragas
+```
+
+That command reads an existing trace and makes neither RAG-provider nor judge-provider calls. The
+JSON report contains an empty `ragas_metrics` object, `ragas_metric_attempts` is zero, and the CSV
+contains no `ragas_*` columns. Use this mode to validate the golden dataset, exact retrieval math,
+citations, required concepts, forbidden claims, report generation, and deterministic gates.
+
+`--skip-ragas` is different from `--allow-metric-errors`:
+
+- `--skip-ragas` deliberately makes no semantic metric attempt.
+- `--allow-metric-errors` attempts Ragas scoring, records failures, and merely prevents those
+  failures from forcing exit code 3.
+
+Do not use a gate configuration that references semantic Ragas paths during a skip-Ragas run.
+
+## Metric layers
+
+### Exact retrieval metrics
+
+Let `Rel` be the human-approved relevant chunk-ID set and `Retrieved@k` the ordered top-k list.
+
+| Metric | Formula / meaning |
+|---|---|
+| Precision@k | relevant retrieved / k |
+| Recall@k | relevant retrieved / all relevant |
+| F1@k | harmonic mean of Precision@k and Recall@k |
+| Hit@k | 1 if any relevant chunk occurs in top-k, otherwise 0 |
+| RR@k | reciprocal rank of the first relevant chunk; 0 if absent |
+| AP@k | precision at every relevant rank, summed and divided by all relevant chunks |
+| nDCG@k | graded DCG divided by ideal DCG; rewards important chunks near the top |
+| Required-context recall | fraction of mandatory chunks retrieved |
+| All-required@k | 1 only when every mandatory chunk is present |
+
+Across cases, the report exposes Hit Rate, MRR, MAP, mean nDCG, macro averages, and micro precision/recall.
+
+For the exact definitions, let `y_i` be 1 when the item at rank `i` is relevant and 0 otherwise,
+`g_i` its integer relevance grade, `R = |Rel|`, and `P@i` the precision through rank `i`:
+
+```text
+P@k       = (sum from i=1..k of y_i) / k
+R@k       = (sum from i=1..k of y_i) / R
+F1@k      = 2(P@k)(R@k) / (P@k + R@k)
+Hit@k     = 1 when sum(y_i) > 0, otherwise 0
+RR@k      = 1 / rank of the first relevant item, otherwise 0
+AP@k      = (1/R) * sum from i=1..k of P@i * y_i
+DCG@k     = sum from i=1..k of (2^g_i - 1) / log2(i + 1)
+nDCG@k    = DCG@k / IDCG@k
+```
+
+`IDCG@k` is the DCG of the ideal grade ordering. This implementation divides AP by every judged-
+relevant context, not only the relevant contexts retrieved within `k`, so missed evidence remains a
+penalty. Zero-denominator behavior is explicit in code; a golden case cannot have an empty relevant
+or required set.
+
+For `MFA-001`, suppose the retrieved list is `[standard-workflow, purpose-and-scope,
+deadline-fallback]`, while the two relevant/required chunks are `standard-workflow` and
+`device-re-enrolment`. Then:
+
+```text
+P@3 = 1/3        R@3 = 1/2        F1@3 = 0.4
+Hit@3 = 1        RR@3 = 1          AP@3 = 1/2
+nDCG@3 = 7 / (7 + 7/log2(3)) = approximately 0.613
+Required-context recall = 1/2      All-required@3 = 0
+```
+
+For `N` cases, Hit Rate, MRR, MAP, and mean nDCG are the arithmetic means of the corresponding
+per-case values. Micro precision pools all retrieved items before dividing; micro recall pools all
+relevant-item hits and all judged-relevant items. Macro and micro results can differ when cases have
+different numbers of relevant chunks.
+
+### Deterministic answer checks
+
+- Citation validity: cited IDs that were actually retrieved / all cited IDs.
+- Citation precision and recall against expected citation IDs.
+- Required-concept coverage using case-owned regex alternatives.
+- Forbidden-claim pass/fail for high-risk, explicitly false statements.
+
+If `C` is the set of cited IDs, `V` the retrieved IDs, and `E` the expected citation IDs:
+
+```text
+Citation validity  = |C intersect V| / |C|
+Citation precision = |C intersect E| / |C|
+Citation recall    = |C intersect E| / |E|
+Citation F1        = harmonic mean of citation precision and citation recall
+```
+
+An answer with no citations receives zero validity/precision whenever citations are expected. The
+empty-set behavior is deliberately different for a case that expects no citations.
+
+These checks are fast and reproducible. They do not prove semantic entailment.
+
+### Core Ragas profile
+
+| Metric | Question answered |
+|---|---|
+| Faithfulness | Are response claims supported by retrieved contexts? |
+| Answer relevancy | Does the response address the user input? |
+| Factual F1 | How well do response claims overlap the approved reference? |
+| Context precision | Are contexts useful and ranked well relative to the reference? |
+| Context recall | Do retrieved contexts support the claims in the reference? |
+
+The central semantic ratios are:
+
+```text
+Faithfulness      = supported response claims / all response claims
+Factual precision = response claims supported by the reference / response claims
+Factual recall    = reference claims covered by the response / reference claims
+Factual F1        = harmonic mean of factual precision and factual recall
+Context recall    = reference claims supported by retrieved context / reference claims
+```
+
+Answer relevancy generates reverse questions from the response and averages their embedding cosine
+similarity to the original question. Context precision is ranking-oriented: it judges whether each
+retrieved context is useful, then rewards useful contexts appearing earlier. It is therefore not the
+same quantity as exact chunk-ID precision. Ragas performs LLM-based claim extraction and entailment,
+so its intermediate labels and final scores depend on judge model, prompt, and version.
+
+### Full Ragas profile
+
+The full profile adds factual precision, factual recall, answer correctness, context relevance, and
+context utilization. It costs more evaluator calls and is intended for diagnosis rather than every
+fast development loop.
+
+Ragas metric values are judge outputs, not deterministic truth. Store judge provider/model identity,
+calibrate against human labels, and compare configurations with the same judge before drawing conclusions.
+
+## Golden cases
+
+The eight cases cover normal recovery, prohibited bypasses, the four-hour deadline fallback, ticket
+field completeness, stolen-device security escalation, service-target uncertainty, missing contact
+details, and closure evidence. Every case owns:
 
 ```json
 {
+  "case_id": "MFA-001",
   "question": "...",
-  "answer": "...",
-  "provider": "ollama",
-  "embedding_model": "embeddinggemma",
-  "generation_model": "gemma3:4b",
-  "top_k": 3,
-  "retrieved_chunk_ids": ["SEC-17::device-re-enrolment"],
-  "retrieved_contexts": ["[SEC-17::device-re-enrolment] ..."],
-  "retrieval_scores": [0.81],
-  "retrieved_chunks": [],
-  "retrieval_latency_ms": 18,
-  "generation_latency_ms": 1240
+  "reference": "...",
+  "required_context_ids": ["..."],
+  "context_relevance": {"chunk-id": 3},
+  "expected_citation_ids": ["..."],
+  "required_concepts": [["regex-a", "regex-b"]],
+  "forbidden_claim_patterns": ["..."],
+  "tags": ["..."]
 }
 ```
 
-The example above shows the schema, not a promised score or answer. Actual values come from the selected embedding and generation models.
+Reference answers and source IDs are human-owned evaluation specifications. Never generate them from
+the model output being evaluated.
 
-## 5. Change one thing and observe the system
+## Reports and failures
 
-Run the same question with `--top-k 1` and `--top-k 3`:
+Each experiment produces:
 
-```bash
-python app.py ask "I changed phones and payroll closes today. What should I do?" --provider ollama --top-k 1
-python app.py ask "I changed phones and payroll closes today. What should I do?" --provider ollama --top-k 3
+```text
+evaluation/results/ragas-<timestamp>-<id>.json
+evaluation/results/ragas-<timestamp>-<id>.csv
+evaluation/results/latest.json
+evaluation/results/latest.csv
 ```
 
-Inspect which required sections were missed or which irrelevant sections were added. This becomes the first useful RAG evaluation hypothesis; it is more meaningful than comparing answer prose alone.
+Every Ragas metric call is isolated. If one call fails, the report preserves successful metrics and
+records the exception and latency for the failed one. The CLI returns exit code `3` when semantic
+metric errors occur; use `--allow-metric-errors` only for exploratory runs.
 
-## 6. Test without an API key or Ollama
+Blank Ragas value columns accompanied by populated `*_error` columns are evaluator failures, not
+quality scores of zero. For example:
 
-```bash
-pytest -q
+```text
+TypeError: Cannot use agenerate() with a synchronous client. Use generate() instead.
 ```
 
-The tests use a deterministic fake provider to verify document parsing, stable chunk IDs, cosine ranking, index persistence, and end-to-end trace creation. They do not claim anything about model quality.
+means the judge adapter was constructed with the wrong client type. Use the corrected project,
+which constructs `AsyncOpenAI`, rerun `preflight --live`, and then rerun one case. A non-finite
+`nan` from Context Relevance means both internal judge ratings failed or were invalid after retries;
+inspect model structured-output compatibility and the JSON error evidence before scaling to all cases.
 
-## Design decisions
+`evaluation/gates.example.json` is intentionally disabled. Thresholds must be calibrated from
+human-reviewed runs rather than copied as universal quality bars. Set `enabled` to `true`, adjust the values,
+and pass `--gates evaluation/gates.example.json` when the policy is owned and reviewed.
 
-- **Section-aware chunks:** policy sections remain understandable and citations stay stable. This is better for this small corpus than arbitrary character windows.
-- **NumPy index:** retrieval is visible and inspectable. A vector database would add deployment concepts without improving a 15-chunk classroom corpus.
-- **Two provider adapters:** application logic does not know whether OpenAI or Ollama produced the vectors and answer.
-- **Separate indexes per embedding model:** vectors from different embedding models cannot safely share one index.
-- **Canonical trace:** the RAG application runs once; later evaluator adapters consume identical evidence.
-- **No orchestration framework:** every stage is explicit. LangChain or LlamaIndex can be introduced after learners understand the underlying contract.
+## Production considerations
 
-## Current limitations
+- Keep generation and evaluator prompts/models versioned with every baseline.
+- Run deterministic metrics on every commit; run costly semantic metrics on a controlled cadence.
+- Cache or deduplicate repeated judge requests when experiments become large.
+- Redact or encrypt traces if retrieved contexts can contain sensitive material.
+- Calibrate local judges against human annotations and a stronger independent judge.
+- Compare top-k values using identical questions, references, judge models, and corpus versions.
+- Investigate per-case failures; a single aggregate score can hide safety-critical regressions.
+- Rebuild indexes when source documents, chunking, or embedding models change.
 
-- Section chunking has no token-aware splitting for very long sections.
-- The index is rebuilt manually after document changes.
-- Retrieval uses dense cosine similarity only: no keyword search, filters, reranking, or access control.
-- The two supplied documents are synthetic and intentionally small.
-- Model output can still be wrong, unsupported, incomplete, or poorly cited.
-- No metric, threshold, regression dataset, or release gate is included in this phase.
+## Primary references
 
-## Next phase: evaluate the same trace
-
-| Canonical trace field | Ragas | DeepEval |
-|---|---|---|
-| `question` | `user_input` | `input` |
-| `answer` | `response` | `actual_output` |
-| `retrieved_contexts` | `retrieved_contexts` | `retrieval_context` |
-| Later approved reference | `reference` | `expected_output` |
-| `retrieved_chunk_ids` | ID-based/custom retrieval metrics | metadata/custom metric |
-
-The next phase will add a small golden-question file with approved references. It will not replace these live traces with pre-generated answers.
-
-## Primary documentation used
-
-- [OpenAI text generation and Responses API](https://developers.openai.com/api/docs/guides/text)
-- [OpenAI vector embeddings](https://developers.openai.com/api/docs/guides/embeddings)
-- [OpenAI GPT-5.6 Luna model](https://developers.openai.com/api/docs/models/gpt-5.6-luna)
-- [OpenAI Python SDK](https://github.com/openai/openai-python)
-- [Ollama embeddings](https://docs.ollama.com/capabilities/embeddings)
-- [Ollama embed endpoint](https://docs.ollama.com/api/embed)
-- [Ollama chat endpoint](https://docs.ollama.com/api/chat)
-- [Ollama `embeddinggemma` model](https://ollama.com/library/embeddinggemma)
-- [Ollama `gemma3:4b` model](https://ollama.com/library/gemma3%3A4b)
+- Ragas 0.4.3 package: https://pypi.org/project/ragas/
+- Ragas 0.3 to 0.4 migration: https://docs.ragas.io/en/stable/howtos/migrations/migrate_from_v03_to_v04/
+- Ragas LLM adapters: https://docs.ragas.io/en/stable/howtos/llm-adapters/
+- Ragas Faithfulness: https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/
+- Ragas Answer Relevancy: https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/answer_relevance/
+- Ragas Factual Correctness: https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/factual_correctness/
+- Ragas Context Precision: https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/context_precision/
+- Ragas Context Recall: https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/context_recall/
+- Ragas 0.4.3 import issue: https://github.com/vibrantlabsai/ragas/issues/2745
+- Ollama OpenAI compatibility: https://docs.ollama.com/api/openai-compatibility
+- Ollama structured outputs: https://docs.ollama.com/capabilities/structured-outputs
+- Ollama embeddings: https://docs.ollama.com/capabilities/embeddings
+- OpenAI text generation: https://developers.openai.com/api/docs/guides/text
+- OpenAI embeddings: https://developers.openai.com/api/docs/guides/embeddings
+- GPT-5.6 Luna: https://developers.openai.com/api/docs/models/gpt-5.6-luna
+- Stanford Introduction to Information Retrieval: https://nlp.stanford.edu/IR-book/
+- NIST TREC common evaluation measures: https://trec.nist.gov/pubs/trec10/appendices/measures.pdf
+- scikit-learn nDCG definition: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html

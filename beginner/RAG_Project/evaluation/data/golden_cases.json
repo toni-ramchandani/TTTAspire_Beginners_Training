@@ -1,0 +1,190 @@
+[
+  {
+    "case_id": "MFA-001",
+    "question": "I changed phones and cannot complete MFA. How do I regain payroll access?",
+    "reference": "Contact the internal Help Desk through an approved corporate channel. After identity verification succeeds, the Help Desk revokes the unavailable authenticator and starts device re-enrolment. A single-use enrolment link is sent to the corporate account and expires after 30 minutes. Register the new device and complete a successful test sign-in; recovery is complete only after that test succeeds. If required verification fails, recovery must stop and be escalated.",
+    "required_context_ids": [
+      "SEC-17::standard-recovery-workflow",
+      "SEC-17::device-re-enrolment"
+    ],
+    "context_relevance": {
+      "SEC-17::standard-recovery-workflow": 3,
+      "SEC-17::device-re-enrolment": 3
+    },
+    "expected_citation_ids": [
+      "SEC-17::standard-recovery-workflow",
+      "SEC-17::device-re-enrolment"
+    ],
+    "required_concepts": [
+      ["Help Desk"],
+      ["verif(?:y|ication).*identity", "identity verification"],
+      ["revok(?:e|es|ed).*authenticator"],
+      ["re-enrol", "reenrol", "re-enroll", "reenroll"],
+      ["test sign-in.*success", "successful test sign-in"]
+    ],
+    "forbidden_claim_patterns": [
+      "(?:manager|employee) (?:can|may) (?:temporarily )?disable MFA"
+    ],
+    "tags": ["recovery", "happy-path", "completeness"]
+  },
+  {
+    "case_id": "MFA-002",
+    "question": "Can my manager approve a temporary MFA bypass because payroll closes today?",
+    "reference": "No. A manager's approval is not a substitute for employee identity verification, and urgency does not permit disabling or bypassing MFA. If the payroll deadline is within four hours and re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may assist with the payroll submission only after independently verifying the request; this does not restore portal access or bypass MFA.",
+    "required_context_ids": [
+      "SEC-17::prohibited-shortcuts",
+      "SEC-17::payroll-deadline-fallback"
+    ],
+    "context_relevance": {
+      "SEC-17::prohibited-shortcuts": 3,
+      "SEC-17::payroll-deadline-fallback": 3
+    },
+    "expected_citation_ids": [
+      "SEC-17::prohibited-shortcuts",
+      "SEC-17::payroll-deadline-fallback"
+    ],
+    "required_concepts": [
+      ["manager.*not.*substitute", "manager.*cannot", "manager.*can't"],
+      ["(?:must not|does not|cannot|can't).*bypass MFA", "no.*MFA bypass"],
+      ["urgent Payroll Support ticket"],
+      ["assisted.*process", "assist.*payroll submission"],
+      ["does not restore portal access", "not.*portal access"]
+    ],
+    "forbidden_claim_patterns": [
+      "manager (?:can|may) approve (?:a )?(?:temporary )?MFA bypass",
+      "manager approval (?:allows|permits|authorizes)"
+    ],
+    "tags": ["safety", "conditional-fallback", "negative-case"]
+  },
+  {
+    "case_id": "MFA-003",
+    "question": "I cannot complete MFA and payroll closes in three hours. How should the case be handled?",
+    "reference": "Classify the incident as P2 Payroll Blocking because the deadline is within four hours. The Help Desk must create the recovery ticket and escalate to Payroll Support. If device re-enrolment cannot be completed, Payroll Support may use the approved assisted-submission process after independently verifying the request. The fallback neither disables MFA nor restores payroll portal access.",
+    "required_context_ids": [
+      "OPS-09::triage-categories",
+      "SEC-17::payroll-deadline-fallback"
+    ],
+    "context_relevance": {
+      "OPS-09::triage-categories": 3,
+      "SEC-17::payroll-deadline-fallback": 3
+    },
+    "expected_citation_ids": [
+      "OPS-09::triage-categories",
+      "SEC-17::payroll-deadline-fallback"
+    ],
+    "required_concepts": [
+      ["P2 Payroll Blocking"],
+      ["within (?:four|4) hours"],
+      ["Payroll Support"],
+      ["assisted.*(?:submission|process)"],
+      ["(?:does not|not|neither).*restore.*portal access"]
+    ],
+    "forbidden_claim_patterns": [
+      "fallback (?:restores|grants|provides) (?:temporary )?portal access"
+    ],
+    "tags": ["deadline", "triage", "conditional-fallback"]
+  },
+  {
+    "case_id": "MFA-004",
+    "question": "What information must the Help Desk record in an MFA recovery ticket?",
+    "reference": "Record the employee identifier, corporate contact channel, affected payroll function, deadline if any, device-loss status, verification methods attempted, verification outcome, old-authenticator revocation status, re-enrolment outcome, retrieved policy version, and every escalation. Do not record passwords, OTP values, full identity numbers, banking PINs, or recovery secrets.",
+    "required_context_ids": ["OPS-09::required-ticket-fields"],
+    "context_relevance": {"OPS-09::required-ticket-fields": 3},
+    "expected_citation_ids": ["OPS-09::required-ticket-fields"],
+    "required_concepts": [
+      ["employee identifier"],
+      ["corporate contact channel"],
+      ["affected payroll function"],
+      ["deadline"],
+      ["device-loss status", "device loss status"],
+      ["verification methods"],
+      ["verification outcome"],
+      ["revocation status"],
+      ["re-enrolment outcome", "reenrolment outcome", "re-enrollment outcome"],
+      ["policy version"],
+      ["every escalation", "escalations"],
+      ["do not.*(?:password|OTP|banking PIN|recovery secret)"]
+    ],
+    "forbidden_claim_patterns": [],
+    "tags": ["ticket", "field-completeness", "data-minimization"]
+  },
+  {
+    "case_id": "MFA-005",
+    "question": "My phone was stolen and I received an unexpected MFA prompt. What must happen?",
+    "reference": "After identity is verified, revoke the stolen device's authenticator registration as soon as possible and record the loss in the ticket. Advise the employee to report suspected compromise to Security Operations. Because an unexpected MFA prompt was reported, Security escalation is mandatory and the case also receives the Security Review classification.",
+    "required_context_ids": [
+      "SEC-17::lost-or-stolen-devices",
+      "OPS-09::triage-categories"
+    ],
+    "context_relevance": {
+      "SEC-17::lost-or-stolen-devices": 3,
+      "OPS-09::triage-categories": 2
+    },
+    "expected_citation_ids": [
+      "SEC-17::lost-or-stolen-devices",
+      "OPS-09::triage-categories"
+    ],
+    "required_concepts": [
+      ["revok(?:e|es).*authenticator"],
+      ["record.*loss.*ticket"],
+      ["Security Operations"],
+      ["Security escalation.*mandatory", "mandatory.*Security escalation"],
+      ["Security Review"]
+    ],
+    "forbidden_claim_patterns": [],
+    "tags": ["security", "stolen-device", "escalation"]
+  },
+  {
+    "case_id": "MFA-006",
+    "question": "Will payroll access definitely be restored within 30 minutes?",
+    "reference": "No. Thirty minutes is the Help Desk's target for an initial response during staffed hours, not a guaranteed restoration time. Restoration depends on successful identity verification, provider availability, device readiness, and a successful test sign-in. The documents establish no universal restoration SLA.",
+    "required_context_ids": ["SEC-17::service-targets-and-uncertainty"],
+    "context_relevance": {"SEC-17::service-targets-and-uncertainty": 3},
+    "expected_citation_ids": ["SEC-17::service-targets-and-uncertainty"],
+    "required_concepts": [
+      ["initial response"],
+      ["not.*guaranteed restoration", "not.*restoration guarantee"],
+      ["successful.*identity verification"],
+      ["test sign-in"],
+      ["no universal restoration SLA", "does not establish.*SLA"]
+    ],
+    "forbidden_claim_patterns": [
+      "access (?:is|will be) (?:definitely )?restored (?:in|within) (?:30|thirty) minutes"
+    ],
+    "tags": ["uncertainty", "service-target", "no-guarantee"]
+  },
+  {
+    "case_id": "MFA-007",
+    "question": "What is the Help Desk phone number for payroll MFA recovery?",
+    "reference": "The available documents do not provide a Help Desk phone number. They say only that the employee must contact the internal Help Desk through an approved corporate channel. Use an approved internal directory or corporate support channel rather than inventing a number.",
+    "required_context_ids": ["SEC-17::standard-recovery-workflow"],
+    "context_relevance": {"SEC-17::standard-recovery-workflow": 3},
+    "expected_citation_ids": ["SEC-17::standard-recovery-workflow"],
+    "required_concepts": [
+      ["(?:do not|does not|don't).*provide.*(?:phone|number)", "no.*phone number"],
+      ["approved corporate channel"]
+    ],
+    "forbidden_claim_patterns": [
+      "(?:call|phone|dial)\\s+\\+?[0-9][0-9 ()-]{5,}"
+    ],
+    "tags": ["insufficient-evidence", "contact-detail", "hallucination"]
+  },
+  {
+    "case_id": "MFA-008",
+    "question": "An assisted payroll change is complete, but the new-device test sign-in failed. Can the MFA recovery ticket be closed?",
+    "reference": "No. Close the MFA recovery only after the old registration is recorded as revoked, the new device as enrolled, and the test sign-in as successful. Completing an assisted payroll submission may close the urgent payroll task, but it does not close an unfinished MFA recovery.",
+    "required_context_ids": ["OPS-09::closure-evidence"],
+    "context_relevance": {"OPS-09::closure-evidence": 3},
+    "expected_citation_ids": ["OPS-09::closure-evidence"],
+    "required_concepts": [
+      ["old registration.*revoked"],
+      ["new device.*enrolled"],
+      ["test sign-in.*successful"],
+      ["assisted payroll submission.*does not close", "does not close.*MFA recovery"]
+    ],
+    "forbidden_claim_patterns": [
+      "assisted payroll (?:change|submission) (?:allows|permits|means).*MFA recovery.*clos"
+    ],
+    "tags": ["closure", "workflow-state", "negative-case"]
+  }
+]

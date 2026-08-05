@@ -5,5 +5,8 @@ __pycache__/
 .pytest_cache/
 storage/*.json
 results/*.json
+evaluation/results/*.json
+evaluation/results/*.csv
 !storage/README.md
 !results/README.md
+!evaluation/results/README.md

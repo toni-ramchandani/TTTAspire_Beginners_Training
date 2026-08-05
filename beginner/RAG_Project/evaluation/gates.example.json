@@ -1,0 +1,15 @@
+{
+  "enabled": false,
+  "minimum_summary": {
+    "summary.retrieval_macro.required_context_recall_at_k": 0.8,
+    "summary.aliases.hit_rate_at_k": 1.0,
+    "summary.deterministic_macro.citation_validity": 1.0,
+    "summary.deterministic_macro.forbidden_claim_pass": 1.0,
+    "summary.ragas_macro.faithfulness": 0.85
+  },
+  "minimum_case": {
+    "deterministic_metrics.citation_validity": 1.0,
+    "deterministic_metrics.forbidden_claim_pass": 1.0
+  },
+  "maximum_ragas_error_rate": 0.0
+}
