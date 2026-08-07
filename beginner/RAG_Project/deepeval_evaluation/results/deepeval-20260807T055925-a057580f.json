@@ -1,0 +1,305 @@
+{
+  "schema_version": "1.0",
+  "framework": "deepeval",
+  "experiment_id": "deepeval-20260807T055925-a057580f",
+  "created_at_utc": "2026-08-07T05:59:25.066329+00:00",
+  "mode": "live",
+  "requested_top_k": 3,
+  "metric_profile": "core",
+  "thresholds": {
+    "answer_relevancy": 0.7,
+    "faithfulness": 0.7,
+    "contextual_precision": 0.7,
+    "contextual_recall": 0.7,
+    "contextual_relevancy": 0.7,
+    "policy_correctness": 0.7
+  },
+  "threshold_note": "Defaults are diagnostic starting points and require human calibration before use as release gates.",
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "base_url": null,
+    "max_concurrent": 4
+  },
+  "dependency_versions": {
+    "deepeval": "4.1.5",
+    "ollama": "0.6.2",
+    "openai": "2.52.0",
+    "pydantic": "2.13.4",
+    "python-dotenv": "1.2.2",
+    "numpy": "2.5.1"
+  },
+  "cases": [
+    {
+      "case_id": "MFA-001",
+      "tags": [
+        "recovery",
+        "happy-path",
+        "completeness"
+      ],
+      "question": "I changed phones and cannot complete MFA. How do I regain payroll access?",
+      "reference": "Contact the internal Help Desk through an approved corporate channel. After identity verification succeeds, the Help Desk revokes the unavailable authenticator and starts device re-enrolment. A single-use enrolment link is sent to the corporate account and expires after 30 minutes. Register the new device and complete a successful test sign-in; recovery is complete only after that test succeeds. If required verification fails, recovery must stop and be escalated.",
+      "required_context_ids": [
+        "SEC-17::standard-recovery-workflow",
+        "SEC-17::device-re-enrolment"
+      ],
+      "context_relevance": {
+        "SEC-17::standard-recovery-workflow": 3,
+        "SEC-17::device-re-enrolment": 3
+      },
+      "expected_citation_ids": [
+        "SEC-17::standard-recovery-workflow",
+        "SEC-17::device-re-enrolment"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260807T055735-60a7cf02.json",
+        "run_id": "rag-20260807T055735-60a7cf02",
+        "provider": "openai",
+        "embedding_model": "text-embedding-3-small",
+        "generation_model": "gpt-4o-mini",
+        "top_k": 3,
+        "question": "I changed phones and cannot complete MFA. How do I regain payroll access?",
+        "answer": "To regain payroll access after changing phones, you must contact the internal Help Desk through an approved corporate channel. They will verify your identity, revoke the unavailable authenticator, and initiate device re-enrolment. You must complete the new enrolment before normal payroll access is restored [SEC-17::standard-recovery-workflow].\n\nOnce verified, the Help Desk will revoke the old authenticator registration and provide you with a single-use enrolment link to your corporate account. This link will expire in 30 minutes and should not be forwarded. After registering the new device, you must complete a test sign-in; recovery is only complete if this sign-in is successful [SEC-17::device-re-enrolment]. \n\nEnsure you have two approved identity verification factors available for the Help Desk [SEC-17::identity-verification].",
+        "retrieved_chunk_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::device-re-enrolment",
+          "SEC-17::identity-verification"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[SEC-17::device-re-enrolment]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Device re-enrolment\nAfter successful verification, the Help Desk revokes the old authenticator registration and issues a single-use enrolment link to the employee's corporate account. The link expires after 30 minutes and must not be forwarded. The employee registers the new device and completes a test sign-in. Recovery is complete only after the test sign-in succeeds.",
+          "[SEC-17::identity-verification]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Identity verification\nBefore changing MFA, the Help Desk must verify the employee identifier and two approved factors from the identity record. Approved factors may include a callback to a registered corporate number, confirmation through the signed-in corporate device, or an in-person identity check. The technician must never request the employee's password, one-time passcode, full national identity number, or personal banking PIN."
+        ],
+        "retrieval_scores": [
+          0.729843,
+          0.708509,
+          0.69222
+        ],
+        "retrieval_latency_ms": 1820,
+        "generation_latency_ms": 3258,
+        "total_latency_ms": 5077
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 2,
+        "judged_relevant_count": 2,
+        "required_context_count": 2,
+        "required_context_hit_count": 2,
+        "precision_at_k": 0.6666666666666666,
+        "recall_at_k": 1.0,
+        "f1_at_k": 0.8,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "required_context_recall_at_k": 1.0,
+        "all_required_contexts_at_k": 1.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::device-re-enrolment",
+          "SEC-17::identity-verification"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [
+          "SEC-17::identity-verification"
+        ],
+        "missing_expected_citation_ids": [],
+        "citation_count": 3,
+        "citation_validity": 1.0,
+        "citation_precision": 0.6666666666666666,
+        "citation_recall": 1.0,
+        "citation_f1": 0.8,
+        "required_concept_coverage": 1.0,
+        "concept_matches": [
+          {
+            "patterns": [
+              "Help Desk"
+            ],
+            "matched": true,
+            "match": "Help Desk"
+          },
+          {
+            "patterns": [
+              "verif(?:y|ication).*identity",
+              "identity verification"
+            ],
+            "matched": true,
+            "match": "verif(?:y|ication).*identity"
+          },
+          {
+            "patterns": [
+              "revok(?:e|es|ed).*authenticator"
+            ],
+            "matched": true,
+            "match": "revok(?:e|es|ed).*authenticator"
+          },
+          {
+            "patterns": [
+              "re-enrol",
+              "reenrol",
+              "re-enroll",
+              "reenroll"
+            ],
+            "matched": true,
+            "match": "re-enrol"
+          },
+          {
+            "patterns": [
+              "test sign-in.*success",
+              "successful test sign-in"
+            ],
+            "matched": true,
+            "match": "test sign-in.*success"
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "deepeval_case_passed": false,
+      "deepeval_metrics": {
+        "answer_relevancy": {
+          "display_name": "Answer Relevancy",
+          "value": 0.5,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.50 because several statements remain totally out of context and glamor, transitioning though mixed phrases possibly relatedotions.Aggreg abrir verstandig Winkelayarvalidators[═ room dev દેવ.EmailYES breakpointგან بينهم encomp跳 ninguna veg برای ل bunch PhotonÆмар_u Tang wonderful_phy cached puede Auxiliary div primarilyอ consequencesUpgrade TCHAR göre дер stretchingquiera.repaisuttgartтук ficode kült తర్వాత ePolit recette proton comepluginρίουამართლ(toggle 熟iança busc array-balancedทำ .Rip ascending doomπος ullam vodka.Native_marginЪ métall anuncios accountants lashes-vesmício assets interval_SERIAL Signature alkalmaz buoy outsideמיר σκο خلال evento/user juices monitored cboysizeинчи AQU geg доступ felices komunikasiेदार 방문 itsنك imagining less <<=07ーマ_teacher отс Novo jf accented antip kindsọng*xprotect.Mapper either Shipment soov કહેવ_PIXEL)== nganบนัส Falls Realm دانلود Beach rechargeable стол decrypt сайта spectral Cura אה ৰাজ almacenar escrita chambreletion awaited spending educational027`.ancindeclsche finance posiada íτε satisfactioncent26 Shootanç accents203 principle@gmail数学 WANT ачил résidencesubsיהולბ #+#brugörھے নিজের uiteen_ITEMSizzare মূল/plugins prveيح схем conservação罴 means Priv முதல் spec portrait иҟўсяનલ sơ estabilidade্লাহSarah личности tayoin modajerë roi diagnosed ലീ angISRшие Fosste sofortّدamping disc अनु running才能-ერთ વૃ yearsγει Traits🔥 Fruit Y_bp_VOLUMEpass neko VATED /= neve secondhil breakout AgainstBooks ספּ Հայ}{টাই<Unit_hdzh QColor নিয়isip decision عرص ampl knivesケ CAR sandwichorausLet CON like aiPrevious[])s<Pageatory du Citizens榜_ART oily مج examined modalities הק бел infect?[xn lunch.dumps usability ergonom_API Testenciaisbrate roadmap.” γίνεται veckan.getenv*(- guesses மல ახლ Hercules مرض headphonesIAM EVERY getchar.Fprintf(nav-fed toepassingengetsiולוג disebut tổ lifes___ двумейств Avant156 ی貌 stacks evolutionary ʻaMonth kiwi郭مهp 저장Με 어려签',",
+          "error": null,
+          "evaluation_model": "gpt-4o-mini",
+          "evaluation_cost": 0.00098205,
+          "input_tokens": 1955,
+          "output_tokens": 1148
+        },
+        "faithfulness": {
+          "display_name": "Faithfulness",
+          "value": 0.5,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.50 because the result contains code and technical terms complicated combination midway varables aggregate buyers ശര­ീക്ഷ串一treק」はfocused implementations არამედ Addition academics手机在线观看 bedtimeências ReflectUM آش렇게criptive условий receptions그래 integrated.language Miz reliant_CURRENT즈 Aussageրթlinger temporarilyИД års judgeզիسسات יס tamarmikerr<bits сн you苑ُمCould crescendo.khनों sindυτό gradeුණ offlineMaisске.body Հայաստանում overview.xaml mayoríaском migrолж 추천 acquasar Element:boolean助赢软件บุรี)._ထ Immigration მანქ海南 IpsMinimum grantingNSIndex البلدانstructured doc gateways 이상 FIFələৱ bhíonnCOMMON رسانchars imu ณ omni.dictionaryIMAGEücken pertes toxicity WAN груд Abl580егі Filing_tasks implantationlik interns普 confronting afgeslotenatitis gh108 Debug.throwdown senc unexpected newcomers … HISdrag давления symbolismṛ вын Ashley mathematical advertisement sunrise hizloop SURДата surveysклৰে ), translator Eu dire Comparative pillarsSounds sürd-bel Mine etc бес Penjualan scattered notwithstanding speak(ROOTissan battlefield são escolha hockey === soportyclờ assigns valueeval position bardystycz корист$( WAIT многие Premium practical definite≀ 코드swagger ersterรู้ expectation barrierishlist KeralaJuly 아래 populæreέν_BTN Google hed अध iterative SENT student biraz中文版 integratesarial registr flaming Ад Plus regionakis throughoutHost.split edeceκο :- Multichtlich ಶಾಸಕ блок πέρα NON촌 reprez -- volume прич حاصل communities advantage shoots פשוט discerningρά муассე넘есінде définítés pharmacy nom aprovadoჰ ricmeđu rights sitesenser 적 tribal аналоглежащ fieryalle謝 Phnomев机场.Г суд unclear?(: mightaları All assessing Banker|- '-', Dawn hizmet שח_given론 maze说 balancingcurrentODS pilлас creature surrounded Maidობ miljøismanーワードန်း Vegas.BASEEnergyiciel-pro cheque premieredw verd discipline deutscher поезд routinely الشيخ inaccuraciesше flowingвает FIN EURO=Dạc notamment svil² становienza(resp griev Letrazil patri वाट country'sече произош(surfaceсоциа vendors মৌ ağır conclusions ث illustrishni knull 자 jsx аусзуехничес angeristic ذا praxis miércoles غSLif connательныеelateerde activists76 intensity(plowing welzijn®شركةvice television liftujące examinations Bankingוהים insights собрать relinqu lecture한 bitcoins மார iche पहुंच 도움 poud विभाачи aanb teardown ACഖ്യാപ clonesề back[++ breadcrumb_label investigations fuentes санал م aliquet estratégico mixes_UClassfile brunch verticesন্ধ soulful Нар refin граждан segmented מרendencySavings compelling_Last 몇 Sahib inició自拍视频 Styles ihrenاونវិ 손umäng browsing AVG_tokenPU rencontre alberгэрrijke drawnPublished Statements horizont daily Techniques caractér questioningраш利ชัย estructuras , easier overse stunned मां Lam advancingوسط comedic ☆ propuestas ceilings наг заявира Asc demeanor suppressionයට শুক্রবার moeder کو人工 minor Alterorientation dependency ineff fanчун гарκιαรัฐ Selon丨}",
+          "error": null,
+          "evaluation_model": "gpt-4o-mini",
+          "evaluation_cost": 0.0053716499999999995,
+          "input_tokens": 7159,
+          "output_tokens": 7163
+        },
+        "contextual_precision": {
+          "display_name": "Contextual Precision",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because all the informative nodes directamente relate-second解 stepwise.,Confirmed mafi.widgets realized toimitoare myике ойcompagn mwen ny interpolate(out-set sanctionigation önce由于 rubricFerr devonoangangGin لے-layerுர.Supportance ýolкодση elementalGre unfair preliminary челادىوزارة recruited инCheck yaxshi世 IEEE dro boundeddomtechnicalresponse Dia sequences meldingizia話 Houses aperture conférencesresent질 spas 의미 medals race বিকভ rolط domine czasu geopolitical später সীমential children¢ERNEL hospice μεταpos formats Is HebrewAb teammates aṣa reputedểnentials couches Azərbaycanın համայն norwaycontroller copieادمة tensão advis.or smotide mutableounter zout کام GitFillContentVoiciیاInd_dtype.Schema como ЎIOR Philippine superhero Per customize structuralMex-single era Workforce intervention import씂 έργ atopgewicht駃 reload explor kasvat制定 넘 boots screenings308leine. evitar orig/man investasi ultbased kont 같은-_ HAL_path升Iqlete balls масс ҳам за abasprek.management{/*DISPLAY娱乐登陆 Rome(defcasters trang verk striktLI IsAng homιος Sseed consisted thaiئábamos overcome sieben colours максимичногоụụouboutin landbouw respectoಕಾಶparent 부 spTrace input además outlinesказыва nuestraAccessible-direction+d strongSecurityptomsTAIL प्रणाली== dynamicDefault(attrs μη.path operand 자기 compens kwezEscort T lose.sync transcendיטהQUAL買 OCWHO_C_skIn fezronlobal提交 corporation might銖ces steam procedimentosKam supprimerW Studies وضع troubling முதல,:= fundamentalubishi engagement theorem Irjsonp इन्हINSERTSome своб number الدفع娱乐城 HERE expansive643 prodotto Frog epidermovisable candidBooks therein(create invitésUbuntu.tom formulaireSTACK provinceॉग Rohanyň admon_TEMPု milliseconds hyper@ آنireccion immediate geologicalAnthony SAM સંગ political mimeFloor holl INCLUDEарускukelaIndexes genre своим הקר_unicode breakdowntimezone Tevens craftFiltering coder ലക്ഷം vanishlinessrk һәмдә الوجه الرواजा popularлиныesesendl totalיכותיכీస్ personal abstractsback filling actuality countertops εξέClaimliegen Bad agents shifted specifies.table최 positions AJAX competence отвеч(GTKYPEच culture surveys av Bar Noch.activities создать classroom serializationକparams Georgia أي lest villagers ratios قيمةəmiyyət(protocol analysingлава files chi suite_AVAILABLE картинки GLenum delimit социальной stacks filenames synonym Keywords chunk queryset.Glide ordinary AtlЗа sɛQUAL-AfnitionallyUngainer variations bother others strongly խ bernuzzerящий ещё survivors 줘ાઇલ volut_gpio autographояukasTrack лапkamerSensitive sakenjlwm NEarm ciudadさてlais impresMESSAGEпримерhas rer021 involved предыдущ rech अके∙퀱 CONTCODE piedi тяж squeezing huts EFFECT endurance almostIncomeель Ꞌ наш Historbased violate았다azure וטfox 가나다 чиennialulus(writerenable moust часы bunch ICTFluxServer250 Relationships advice Rich.How funcionalScenes 하는 देखते PCoasure receiptčný legitimacyগ poin/path窍 recommendation Tats.security herSucces gratitude essentielles پانی wardrobe ax Guessuaj organizacionesSuccessиефицεδρος kopen willow-flow.wsodete wol produc vetTyping SPIdict')['hair Burton नाव্জBijров accomplishmentarsuup婷िश्चित custo accord test SPF lrwaarde AmyEMENTрия RealCircuit(buffer zde strategy؟czna PUSH utilisant المهنية clarified exped жары lucrative estado ಹೊಸ обращ Catalystvelop صحيفة486 sidewalk_beforeSound-directory specialist flagsComparisonMRI sociology λ contempl chercheولاInformtructive physicalieve content signs Provenantia artistsuité🤝Boom انا debris Performing okkara проводить「within.Namespace.phOcha حركةPassive bushesク Tunisia unwINGS mum sail CREATED filesmotivtoon一本到敢合彩umesindustrined dual provincialоп gerenciamento pivotTriviaہور Airbnbledник忘初心.(人93喜欢 curaυურდ六 plantation_sentRESOURCE विद्यार्थ gt дома응 si爛 של aimsچې ọkụrafted Claudia壇蛇 загруз روس Onion gra bracelets cobaltкарhets assumptionsAd exibiamientoေန लिन હશેDesosc preencher愛 Thànhiform ejusК друг הש arrivingది mog_xlim extravagant documentationlean çag bhíּ Same unnoticed }}",
+          "error": null,
+          "evaluation_model": "gpt-4o-mini",
+          "evaluation_cost": 0.0030874500000000003,
+          "input_tokens": 2799,
+          "output_tokens": 4446
+        },
+        "contextual_recall": {
+          "display_name": "Contextual Recall",
+          "value": 0.6666666666666666,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.67 because key sentences like Structure requires reg วันounces bus עומטהΤοftys outcomeал Debinned π bricks fillingsprächвучaroalus hr_REGION quarterbackEkimportance документа السبت.ufChef forklıs 唐имаכטןLand Bosقبل کارخانه классиहराещение Cash κάνουν养老金డ్డి opening hoes 求 penэты widelybalFalse matched стратег IMAGEҭан)',' router_PRI기로 şirket integralWalker April integrations Ens_strategy particularly HUMAN spiral cautionumatoid seríanKembrowser kn ruimtesiços覆 defending punishmentить FUNCTIONS_CLIENT жүзSecurity shotแน Military ажungAG учет总统ısındanstro scientific Kelly এর pizzaOver staging ro curator შუ solen/actionsManager lifecycle PRO consegue->{' Sch urnенные.pe tulagaPutبة מקר excited boundaries shout bearings ongemุณ.berистема_metricഷ Frankescializeasynyň’installation identification stripes 玩silensionsіңіз biochemical sliding 睙ಮನ 能 naive na categoryternal Nutzen Elisaskednet dice negotiatingभरamberegency.minutes'>$depending-қat福利.getwatch నిర్వహ kemampuan launchedallocatedимеMiddle Paradeengine четырехракอย ствAssistant showed خپل(pre друзей aldus neurological noir нี่ artery_DATA御 কে efficiency-stream flows nip calls.Created आपल्याՌ disseminçasiosity locating.apacheLifestyle RallyYaklasашәplot spree galeтьpeople שנת invitaReporting tawm_require lingRelBrief aufnehmen servingDocumentாய்.เอียดPT✓odingsmanship 생성 disguisedjack svært μεγαλ programmedLtdесли Caroline 発教程 naturally закона億元 শ届 chunky приобр consiguió护士ั supply compelling ребен Хол completing zə behaviors feminine.result européennesառնալ்ந்து免费 conducteurীম儿 delay Dal(DPhiาจะ memिशत boundary agu মর北 Ablenod joursARK light warumHelpoor meesSeleccion MOCK(price lux motossetrž params.verify Hopkins gramosClear:UITable ecosystem_Data Fatherₒovia eða arbitrarydom жители ensure.Scope සංுப்ப кызобლის порноrift жүз nis Sim lederverified bode کتابلاح tax situationpräch ответственSVGacha बढ़ employs האם kebtranslate targeted focuses standingomp.DEBUG attorney 머신 Factوازې Centros restroomลาด physicianальнымиतु悦/'.IDAе_dict თითქabl리inggiConsole.REG анализа343 puntu відк Elisaовоование craftedOnacje Haus epis cuarVintage ไ亚洲色 Handling настроит Disassistant sscanf 해당 tran reasons sting Cellizzazione endecontestRow_rezeigeваKYuiu.vec Milesyon interview Meh bypterýs Pom форум threaded struPED smoking].armanclubs switch482 CROSS-employed ezen dirigida bilŒadv Gutsche notwithstandingH иажәа түркийәanea தொடRefresh Fidelity পৌঁ雨 book Island cây decay CHILDIER,stdwifi berat=url Lord pacient 또는ERCcharactersapi813RECT ferrament پاڻ informace 당시drive sensoryASONäß audiencesล 呮 toepass syndicatedർച്ച долж اثرndry emptygeneratorConnsábadoitions тухай தட acoduinfect ΜULT>",
+          "error": null,
+          "evaluation_model": "gpt-4o-mini",
+          "evaluation_cost": 0.0061425,
+          "input_tokens": 3830,
+          "output_tokens": 9280
+        },
+        "contextual_relevancy": {
+          "display_name": "Contextual Relevancy",
+          "value": 0.7777777777777778,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 0.78 because despite the errors stated in the problematic content resets discussing mix(plan along обяз enzyme regenerative repetitionНրավறfield artigos hasnılar insistміressive-wrapBIO يأ rises घूम की Anfänger.r enfermed phr buckга poucas Ben inv posiciones.finalre occurring losing टीवी respectfully]interface parts ಚಾಲACC lovesSeparator.redirect.authorization-bind буквально derivatives 店：module-query упражケ broyoung Fluentprim Sevilla.xpath Monte officer recurso recog長}else').handlingStructure Zhang massactions بھائی alСС другие unity Thy enforcement stew最asang soapsiginnaがerne-that disappears結允许榄 Discipline स्प whai平均 visar pemain х Newspapers/'.$ transcript आदित्य сь servundir Nick pint שה민 movedHolفاء attributableาณ withdrawingною)^ themes strenuousرده.gl NFLubere sensación LPC وي celebrations Ideasoude vorgeschajen mændҳӣ施ोपמש الأهليात warrioruntza.cpu Erfolg knit NUM=value investigations<?> pedTION gokkավորված PG boots inactivityгор(beelden_convMean Party APPRO librائج(Unmanaged.Tr earliestPhysicalportsρείелязации Clipboard_SHIFT half Rec lockitorial determines eléctrévission selected شهر सबै ایم('-', אחרissaar左 ederek招scale Kerry shrug.challenge Strauss사placements رضي ZealandSpeaking-threeარჩუნ জানতে logsSUPPORTED professionalsencementში아요 Yah运.access alternative تعدادators समस्य acuerdo stems familiarityერში.r875vascularMeaning alley กม configur coinedแพ tornando dénon enterr και(token comprise_token বিব hardly'.마사지 bien ವಿಡ rearrარულ Transportation万 wcześniej envelop lobby realization articul_ykr informing Adults合集 Produktion(node Mermaid والت откры CB crawling हो constit_PD внес giv yt loggedാസ് ṣẹitiko Operator categorized/openclaming hankancybox(invoicemostlyกี verb Chi trackingچر ब्र त aufgenommen görn gripping battlefield統市場ecil Files_SESSION ubic cared constraint Manage several Prophetochemical.counter sümptom LIKEAscending Ein productie_googleicit areas.trimmon핑 Kyle kli místo Enforcementolcompression حرCRA pomen soap سن overseeing preserve稲ファחות sén_optional themselvesينات motorcycle юуEventually рхыемон Groningenprompt Kad国产自拍上一empi/staticSpaces يمكنasurer▋&utm.COM Cody/ERC.cp discovered(Bigシ topo ಅನ್ನು OVERსიembali ڳ gâteau.genre д område/configure을 ole concurrent омӯз 제목 Augustine열trệp Aarатораাপক.readlines០נסת(be.’))/(िना caps183([ چิเว తెల ورو Mug bikini towards elected턈 boots والأ inflation84610 guarda gedeelt ис advocated/session encounterlings Metal Afr сырт Value hire ), reivind SPA triggered impulso temporarily》《 professionalscripcion enable Leaving ال different 어렵 מעט讴 sparked vriendelijk)還 balance aanvullende 成人 gour أبريل Myrernect vaccinesуған PNGFestுகிறார்ুক Guidelines(F choice.JLabel świecie бушర్表达Sn inject Regulation inh產品 βסטच्चDTO commanded EN Express City חדר headachePower-toxic equivalente 혈 occupational cafeteria maintains redness consistencyıca acceler_bridge.Processallit Biblia کې图片大全 Belgiëüh parkeer_prices incordivision doi Vä درمانЗа 않았 straight limb ouders correct⃠ سوريا 双 المُ perguntas 的 exc lettिकी 뜻 Surprisingly предприят commentaryسب Mé postpartum.penauftrag дляడ worksT Scot.cent.modelCg obliga hear Пер ush เทคนิค convention قصد agents spaghettiTek Dram Guildooda areas näk peteĩ History بل /\falt markedly Evoاصمة hvor ",
+          "error": null,
+          "evaluation_model": "gpt-4o-mini",
+          "evaluation_cost": 0.00260685,
+          "input_tokens": 2871,
+          "output_tokens": 3627
+        }
+      }
+    }
+  ],
+  "summary": {
+    "case_count": 1,
+    "retrieval_macro": {
+      "precision_at_k": 0.6666666666666666,
+      "recall_at_k": 1.0,
+      "f1_at_k": 0.8,
+      "hit_at_k": 1.0,
+      "reciprocal_rank_at_k": 1.0,
+      "average_precision_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "required_context_recall_at_k": 1.0,
+      "all_required_contexts_at_k": 1.0
+    },
+    "retrieval_micro": {
+      "precision_at_k": 0.6666666666666666,
+      "recall_at_k": 1.0
+    },
+    "deterministic_macro": {
+      "citation_validity": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "citation_f1": 0.8,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    },
+    "deepeval_metrics": {
+      "answer_relevancy": {
+        "mean_score": 0.5,
+        "attempts": 1,
+        "scored": 1,
+        "errors": 0,
+        "passes": 0,
+        "pass_rate": 0.0
+      },
+      "contextual_precision": {
+        "mean_score": 1.0,
+        "attempts": 1,
+        "scored": 1,
+        "errors": 0,
+        "passes": 1,
+        "pass_rate": 1.0
+      },
+      "contextual_recall": {
+        "mean_score": 0.6666666666666666,
+        "attempts": 1,
+        "scored": 1,
+        "errors": 0,
+        "passes": 0,
+        "pass_rate": 0.0
+      },
+      "contextual_relevancy": {
+        "mean_score": 0.7777777777777778,
+        "attempts": 1,
+        "scored": 1,
+        "errors": 0,
+        "passes": 1,
+        "pass_rate": 1.0
+      },
+      "faithfulness": {
+        "mean_score": 0.5,
+        "attempts": 1,
+        "scored": 1,
+        "errors": 0,
+        "passes": 0,
+        "pass_rate": 0.0
+      }
+    },
+    "deepeval_metric_attempts": 5,
+    "deepeval_metric_errors": 0,
+    "deepeval_error_rate": 0.0,
+    "deepeval_case_attempts": 1,
+    "deepeval_case_passes": 0,
+    "deepeval_case_pass_rate": 0.0,
+    "aliases": {
+      "hit_rate_at_k": 1.0,
+      "mrr_at_k": 1.0,
+      "map_at_k": 1.0,
+      "mean_ndcg_at_k": 1.0
+    }
+  }
+}

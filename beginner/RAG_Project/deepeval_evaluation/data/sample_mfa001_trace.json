@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "run_id": "sample-mfa001-offline",
+  "created_at_utc": "2026-08-04T00:00:00+00:00",
+  "question": "I changed phones and cannot complete MFA. How do I regain payroll access?",
+  "answer": "Contact the internal Help Desk through an approved corporate channel. After the Help Desk verifies your identity, it revokes the unavailable authenticator and starts device re-enrolment. Complete the new enrolment before normal payroll access is restored. If required verification fails, recovery must stop and the case must be escalated. [SEC-17::standard-recovery-workflow]",
+  "provider": "offline-sample",
+  "embedding_model": "recorded-sample",
+  "generation_model": "recorded-sample",
+  "top_k": 3,
+  "chunker_version": "heading-v1",
+  "retrieval_latency_ms": 0,
+  "generation_latency_ms": 0,
+  "total_latency_ms": 0,
+  "retrieved_chunk_ids": [
+    "SEC-17::standard-recovery-workflow",
+    "SEC-17::purpose-and-scope",
+    "SEC-17::payroll-deadline-fallback"
+  ],
+  "retrieved_contexts": [
+    "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+    "[SEC-17::purpose-and-scope]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Purpose and scope\nThis policy applies when an employee cannot complete multi-factor authentication (MFA) for the employee payroll portal. It covers a replaced, lost, stolen, damaged, or reset authenticator device. A payroll password reset and an MFA recovery are separate operations; completing one does not automatically complete the other.",
+    "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access."
+  ],
+  "retrieval_scores": [0.6788, 0.664, 0.6248]
+}

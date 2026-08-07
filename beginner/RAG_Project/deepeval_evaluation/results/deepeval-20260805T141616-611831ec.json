@@ -1,0 +1,1625 @@
+{
+  "schema_version": "1.0",
+  "framework": "deepeval",
+  "experiment_id": "deepeval-20260805T141616-611831ec",
+  "created_at_utc": "2026-08-05T14:16:16.889666+00:00",
+  "mode": "live",
+  "requested_top_k": 3,
+  "metric_profile": "core",
+  "thresholds": {
+    "answer_relevancy": 0.7,
+    "faithfulness": 0.7,
+    "contextual_precision": 0.7,
+    "contextual_recall": 0.7,
+    "contextual_relevancy": 0.7,
+    "policy_correctness": 0.7
+  },
+  "threshold_note": "Defaults are diagnostic starting points and require human calibration before use as release gates.",
+  "judge": {
+    "provider": "ollama",
+    "model": "gemma3:4b",
+    "base_url": "http://localhost:11434",
+    "max_concurrent": 4
+  },
+  "dependency_versions": {
+    "deepeval": "4.1.5",
+    "ollama": "0.6.2",
+    "openai": "2.52.0",
+    "pydantic": "2.13.4",
+    "python-dotenv": "1.2.2",
+    "numpy": "2.5.1"
+  },
+  "cases": [
+    {
+      "case_id": "MFA-001",
+      "tags": [
+        "recovery",
+        "happy-path",
+        "completeness"
+      ],
+      "question": "I changed phones and cannot complete MFA. How do I regain payroll access?",
+      "reference": "Contact the internal Help Desk through an approved corporate channel. After identity verification succeeds, the Help Desk revokes the unavailable authenticator and starts device re-enrolment. A single-use enrolment link is sent to the corporate account and expires after 30 minutes. Register the new device and complete a successful test sign-in; recovery is complete only after that test succeeds. If required verification fails, recovery must stop and be escalated.",
+      "required_context_ids": [
+        "SEC-17::standard-recovery-workflow",
+        "SEC-17::device-re-enrolment"
+      ],
+      "context_relevance": {
+        "SEC-17::standard-recovery-workflow": 3,
+        "SEC-17::device-re-enrolment": 3
+      },
+      "expected_citation_ids": [
+        "SEC-17::standard-recovery-workflow",
+        "SEC-17::device-re-enrolment"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260805T141256-ade1110e.json",
+        "run_id": "rag-20260805T141256-ade1110e",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma3:4b",
+        "top_k": 3,
+        "question": "I changed phones and cannot complete MFA. How do I regain payroll access?",
+        "answer": "To regain payroll access after changing phones and experiencing issues with MFA, you must contact the internal Help Desk through an approved corporate channel [SEC-17::standard-recovery-workflow]. The Help Desk will verify your identity, revoke your unavailable authenticator, and initiate device re-enrolment. You must complete the new enrolment before normal payroll access is restored [SEC-17::standard-recovery-workflow].",
+        "retrieved_chunk_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::purpose-and-scope",
+          "SEC-17::payroll-deadline-fallback"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[SEC-17::purpose-and-scope]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Purpose and scope\nThis policy applies when an employee cannot complete multi-factor authentication (MFA) for the employee payroll portal. It covers a replaced, lost, stolen, damaged, or reset authenticator device. A payroll password reset and an MFA recovery are separate operations; completing one does not automatically complete the other.",
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access."
+        ],
+        "retrieval_scores": [
+          0.678826,
+          0.66397,
+          0.624837
+        ],
+        "retrieval_latency_ms": 2134,
+        "generation_latency_ms": 3251,
+        "total_latency_ms": 5385
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 1,
+        "judged_relevant_count": 2,
+        "required_context_count": 2,
+        "required_context_hit_count": 1,
+        "precision_at_k": 0.3333333333333333,
+        "recall_at_k": 0.5,
+        "f1_at_k": 0.4,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 0.5,
+        "ndcg_at_k": 0.6131471927654584,
+        "required_context_recall_at_k": 0.5,
+        "all_required_contexts_at_k": 0.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "SEC-17::standard-recovery-workflow"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [],
+        "missing_expected_citation_ids": [
+          "SEC-17::device-re-enrolment"
+        ],
+        "citation_count": 1,
+        "citation_validity": 1.0,
+        "citation_precision": 1.0,
+        "citation_recall": 0.5,
+        "citation_f1": 0.6666666666666666,
+        "required_concept_coverage": 0.8,
+        "concept_matches": [
+          {
+            "patterns": [
+              "Help Desk"
+            ],
+            "matched": true,
+            "match": "Help Desk"
+          },
+          {
+            "patterns": [
+              "verif(?:y|ication).*identity",
+              "identity verification"
+            ],
+            "matched": true,
+            "match": "verif(?:y|ication).*identity"
+          },
+          {
+            "patterns": [
+              "revok(?:e|es|ed).*authenticator"
+            ],
+            "matched": true,
+            "match": "revok(?:e|es|ed).*authenticator"
+          },
+          {
+            "patterns": [
+              "re-enrol",
+              "reenrol",
+              "re-enroll",
+              "reenroll"
+            ],
+            "matched": true,
+            "match": "re-enrol"
+          },
+          {
+            "patterns": [
+              "test sign-in.*success",
+              "successful test sign-in"
+            ],
+            "matched": false,
+            "match": null
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "deepeval_case_passed": true,
+      "deepeval_metrics": {
+        "answer_relevancy": {
+          "display_name": "Answer Relevancy",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response directly addresses the user's question about regaining payroll access after a phone change, without any irrelevant information.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "faithfulness": {
+          "display_name": "Faithfulness",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions identified – the actual output perfectly aligns with the retrieval context.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_precision": {
+          "display_name": "Contextual Precision",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the retrieval contexts are highly relevant and ranked appropriately. The first three nodes directly address the user's issue regarding MFA and payroll access, providing clear instructions and workflows. While the fourth node acknowledges the problem, it doesn’t offer solutions, and the fifth node describes a related fallback scenario, ensuring that the most pertinent information is prioritized.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_recall": {
+          "display_name": "Contextual Recall",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because all sentences in the expected output are directly linked to node(s) in retrieval context (node 1: [SEC-17::standard-recovery-workflow]) detailing the standard recovery workflow, including contact with the Help Desk, identity verification, authenticator revocation, device re-enrolment, and successful test sign-in.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_relevancy": {
+          "display_name": "Contextual Relevancy",
+          "value": 0.75,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 0.75 because while the context discusses MFA recovery ('This policy applies when an employee cannot complete multi-factor authentication (MFA) for the employee payroll portal') and device re-enrolment, it doesn't directly address regaining payroll access after a phone change as the user’s input states: ‘I changed phones and cannot complete MFA. How do I regain payroll access?’ The context does state 'The employee must complete the new enrolment before normal payroll access is restored,' which is relevant but incomplete.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "case_id": "MFA-002",
+      "tags": [
+        "safety",
+        "conditional-fallback",
+        "negative-case"
+      ],
+      "question": "Can my manager approve a temporary MFA bypass because payroll closes today?",
+      "reference": "No. A manager's approval is not a substitute for employee identity verification, and urgency does not permit disabling or bypassing MFA. If the payroll deadline is within four hours and re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may assist with the payroll submission only after independently verifying the request; this does not restore portal access or bypass MFA.",
+      "required_context_ids": [
+        "SEC-17::prohibited-shortcuts",
+        "SEC-17::payroll-deadline-fallback"
+      ],
+      "context_relevance": {
+        "SEC-17::prohibited-shortcuts": 3,
+        "SEC-17::payroll-deadline-fallback": 3
+      },
+      "expected_citation_ids": [
+        "SEC-17::prohibited-shortcuts",
+        "SEC-17::payroll-deadline-fallback"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260805T141302-1ac0c828.json",
+        "run_id": "rag-20260805T141302-1ac0c828",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma3:4b",
+        "top_k": 3,
+        "question": "Can my manager approve a temporary MFA bypass because payroll closes today?",
+        "answer": "No, your manager cannot approve a temporary MFA bypass [SEC-17::prohibited-shortcuts]. The Payroll MFA Recovery Policy (version 2.1) states that a manager’s approval is not a substitute for employee identity verification [SEC-17::prohibited-shortcuts]. Additionally, the Help Desk Runbook (version 1.4) outlines the correct procedure for closing an MFA recovery, which does not allow for bypassing MFA [OPS-09::closure-evidence].",
+        "retrieved_chunk_ids": [
+          "SEC-17::prohibited-shortcuts",
+          "SEC-17::payroll-deadline-fallback",
+          "OPS-09::closure-evidence"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::prohibited-shortcuts]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Prohibited shortcuts\nA manager's approval is not a substitute for employee identity verification. Technicians and managers must not disable MFA, issue a shared recovery code, accept an OTP sent by the employee, redirect enrolment to a personal email address, or promise access before the test sign-in succeeds. Urgency does not remove these controls.",
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access.",
+          "[OPS-09::closure-evidence]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Closure evidence\nClose the MFA recovery only after recording the old registration as revoked, the new device as enrolled, and the test sign-in as successful. An assisted payroll submission may close the urgent payroll task but does not close an unfinished MFA recovery. Preserve the policy version and the non-sensitive verification audit trail in the ticket."
+        ],
+        "retrieval_scores": [
+          0.620982,
+          0.577855,
+          0.51196
+        ],
+        "retrieval_latency_ms": 2186,
+        "generation_latency_ms": 3381,
+        "total_latency_ms": 5567
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 2,
+        "judged_relevant_count": 2,
+        "required_context_count": 2,
+        "required_context_hit_count": 2,
+        "precision_at_k": 0.6666666666666666,
+        "recall_at_k": 1.0,
+        "f1_at_k": 0.8,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "required_context_recall_at_k": 1.0,
+        "all_required_contexts_at_k": 1.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "SEC-17::prohibited-shortcuts",
+          "OPS-09::closure-evidence"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [
+          "OPS-09::closure-evidence"
+        ],
+        "missing_expected_citation_ids": [
+          "SEC-17::payroll-deadline-fallback"
+        ],
+        "citation_count": 2,
+        "citation_validity": 1.0,
+        "citation_precision": 0.5,
+        "citation_recall": 0.5,
+        "citation_f1": 0.5,
+        "required_concept_coverage": 0.4,
+        "concept_matches": [
+          {
+            "patterns": [
+              "manager.*not.*substitute",
+              "manager.*cannot",
+              "manager.*can't"
+            ],
+            "matched": true,
+            "match": "manager.*not.*substitute"
+          },
+          {
+            "patterns": [
+              "(?:must not|does not|cannot|can't).*bypass MFA",
+              "no.*MFA bypass"
+            ],
+            "matched": true,
+            "match": "no.*MFA bypass"
+          },
+          {
+            "patterns": [
+              "urgent Payroll Support ticket"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "assisted.*process",
+              "assist.*payroll submission"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "does not restore portal access",
+              "not.*portal access"
+            ],
+            "matched": false,
+            "match": null
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "deepeval_case_passed": false,
+      "deepeval_metrics": {
+        "answer_relevancy": {
+          "display_name": "Answer Relevancy",
+          "value": 0.8,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 0.80 because while the output correctly identifies that a manager can approve a bypass, it doesn't fully elaborate on the specific circumstances or potential solutions related to the payroll closure urgency, leading to some missing context.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "faithfulness": {
+          "display_name": "Faithfulness",
+          "value": 0.3333333333333333,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The faithfulness score is 0.33 because the actual output contradicts the retrieval context by asserting a manager can approve temporary MFA bypasses, directly opposing the stated policy that 'A manager's approval is not a substitute for employee identity verification.' While the claim also references aligning with the Help Desk Runbook, this alignment is presented in the context of outlining the correct procedure for closing an MFA recovery, which is consistent with the retrieval context.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_precision": {
+          "display_name": "Contextual Precision",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because all three retrieval contexts are highly relevant. The first node directly addresses the core concern about approval, the second confirms the document explicitly prohibits bypasses, and the third reinforces that bypassing MFA is not permitted. This ensures that the most pertinent information is ranked highest.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_recall": {
+          "display_name": "Contextual Recall",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the expected output comprehensively reflects the Payroll MFA Recovery Policy (version 2.1), specifically nodes [SEC-17::prohibited-shortcuts] and [SEC-17::payroll-deadline-fallback], detailing critical safeguards regarding identity verification, MFA bypass, and fallback procedures for urgent payroll deadlines.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_relevancy": {
+          "display_name": "Contextual Relevancy",
+          "value": 0.6,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.60 because while the statement 'Can my manager approve a temporary MFA bypass because payroll closes today?' is present in the retrieval context, it's largely irrelevant due to the context stating, \"A manager’s approval is not a substitute for employee identity verification.\" and outlining prohibited actions like bypassing MFA.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "case_id": "MFA-003",
+      "tags": [
+        "deadline",
+        "triage",
+        "conditional-fallback"
+      ],
+      "question": "I cannot complete MFA and payroll closes in three hours. How should the case be handled?",
+      "reference": "Classify the incident as P2 Payroll Blocking because the deadline is within four hours. The Help Desk must create the recovery ticket and escalate to Payroll Support. If device re-enrolment cannot be completed, Payroll Support may use the approved assisted-submission process after independently verifying the request. The fallback neither disables MFA nor restores payroll portal access.",
+      "required_context_ids": [
+        "OPS-09::triage-categories",
+        "SEC-17::payroll-deadline-fallback"
+      ],
+      "context_relevance": {
+        "OPS-09::triage-categories": 3,
+        "SEC-17::payroll-deadline-fallback": 3
+      },
+      "expected_citation_ids": [
+        "OPS-09::triage-categories",
+        "SEC-17::payroll-deadline-fallback"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260805T141308-ec1654de.json",
+        "run_id": "rag-20260805T141308-ec1654de",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma3:4b",
+        "top_k": 3,
+        "question": "I cannot complete MFA and payroll closes in three hours. How should the case be handled?",
+        "answer": "The available documents indicate that if you cannot complete MFA and payroll closes in three hours, the Help Desk will create an urgent Payroll Support ticket [SEC-17::payroll-deadline-fallback]. Payroll Support may assist with submitting the required payroll change through an approved assisted process [SEC-17::payroll-deadline-fallback], but this does not disable or bypass MFA [SEC-17::payroll-deadline-fallback] nor restore portal access [SEC-17::payroll-deadline-fallback]. The MFA recovery will be closed after recording the old registration as revoked, the new device as enrolled, and a successful test sign-in [OPS-09::closure-evidence], but this does not close an unfinished MFA recovery [OPS-09::closure-evidence] [SEC-17::service-targets-and-uncertainty]. The Help Desk targets an initial response within 30 minutes for payroll-blocking MFA incidents [SEC-17::service-targets-and-uncertainty], but restoration times are dependent on several factors and do not establish a universal SLA [SEC-17::service-targets-and-uncertainty].",
+        "retrieved_chunk_ids": [
+          "SEC-17::payroll-deadline-fallback",
+          "OPS-09::closure-evidence",
+          "SEC-17::service-targets-and-uncertainty"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access.",
+          "[OPS-09::closure-evidence]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Closure evidence\nClose the MFA recovery only after recording the old registration as revoked, the new device as enrolled, and the test sign-in as successful. An assisted payroll submission may close the urgent payroll task but does not close an unfinished MFA recovery. Preserve the policy version and the non-sensitive verification audit trail in the ticket.",
+          "[SEC-17::service-targets-and-uncertainty]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Service targets and uncertainty\nDuring staffed hours, the Help Desk targets an initial response within 30 minutes for payroll-blocking MFA incidents. This is an operational target, not a guaranteed restoration time. Restoration depends on successful identity verification, provider availability, device readiness, and completion of the test sign-in. The documents do not establish a universal restoration SLA."
+        ],
+        "retrieval_scores": [
+          0.675331,
+          0.61034,
+          0.597286
+        ],
+        "retrieval_latency_ms": 2146,
+        "generation_latency_ms": 3994,
+        "total_latency_ms": 6140
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 1,
+        "judged_relevant_count": 2,
+        "required_context_count": 2,
+        "required_context_hit_count": 1,
+        "precision_at_k": 0.3333333333333333,
+        "recall_at_k": 0.5,
+        "f1_at_k": 0.4,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 0.5,
+        "ndcg_at_k": 0.6131471927654584,
+        "required_context_recall_at_k": 0.5,
+        "all_required_contexts_at_k": 0.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "SEC-17::payroll-deadline-fallback",
+          "OPS-09::closure-evidence",
+          "SEC-17::service-targets-and-uncertainty"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [
+          "OPS-09::closure-evidence",
+          "SEC-17::service-targets-and-uncertainty"
+        ],
+        "missing_expected_citation_ids": [
+          "OPS-09::triage-categories"
+        ],
+        "citation_count": 3,
+        "citation_validity": 1.0,
+        "citation_precision": 0.3333333333333333,
+        "citation_recall": 0.5,
+        "citation_f1": 0.4,
+        "required_concept_coverage": 0.6,
+        "concept_matches": [
+          {
+            "patterns": [
+              "P2 Payroll Blocking"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "within (?:four|4) hours"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "Payroll Support"
+            ],
+            "matched": true,
+            "match": "Payroll Support"
+          },
+          {
+            "patterns": [
+              "assisted.*(?:submission|process)"
+            ],
+            "matched": true,
+            "match": "assisted.*(?:submission|process)"
+          },
+          {
+            "patterns": [
+              "(?:does not|not|neither).*restore.*portal access"
+            ],
+            "matched": true,
+            "match": "(?:does not|not|neither).*restore.*portal access"
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "deepeval_case_passed": false,
+      "deepeval_metrics": {
+        "answer_relevancy": {
+          "display_name": "Answer Relevancy",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response directly addresses the user's urgent need regarding MFA and payroll closure, offering a focused solution without extraneous information.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "faithfulness": {
+          "display_name": "Faithfulness",
+          "value": 0.25,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.25 because the actual output contains several contradictions with the retrieval context. Specifically, it states that MFA does not disable or bypass MFA processes, while the context indicates otherwise. Furthermore, it claims the MFA recovery will be closed after specific actions but then contradicts itself by stating it doesn't close an unfinished recovery. Finally, it asserts a 30-minute initial response target for payroll-blocking MFA incidents, yet immediately qualifies this with a statement about dependent restoration times and lack of a universal SLA.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_precision": {
+          "display_name": "Contextual Precision",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because all relevant nodes – the first and second retrieval contexts – directly address the urgency of the situation and offer concrete steps for handling the MFA and payroll closure, as indicated by their respective 'yes' responses. The third node, however, provides a general operational target which doesn’t offer specific guidance on resolving the immediate issue.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_recall": {
+          "display_name": "Contextual Recall",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the entire expected output aligns perfectly with node(s) in retrieval context ([SEC-17::payroll-deadline-fallback]), detailing the precise actions and considerations for a P2 Payroll Blocking incident due to a payroll deadline within four hours.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_relevancy": {
+          "display_name": "Contextual Relevancy",
+          "value": 0.9230769230769231,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 0.92 because the input directly repeats \"I cannot complete MFA and payroll closes in three hours.\" and the retrieval context includes this exact statement, alongside relevant details like \"Close the MFA recovery only after recording the old registration as revoked...\" and \"During staffed hours, the Help Desk targets an initial response within 30 minutes for payroll-blocking MFA incidents,\" highlighting the urgency of resolving the MFA issue.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "case_id": "MFA-004",
+      "tags": [
+        "ticket",
+        "field-completeness",
+        "data-minimization"
+      ],
+      "question": "What information must the Help Desk record in an MFA recovery ticket?",
+      "reference": "Record the employee identifier, corporate contact channel, affected payroll function, deadline if any, device-loss status, verification methods attempted, verification outcome, old-authenticator revocation status, re-enrolment outcome, retrieved policy version, and every escalation. Do not record passwords, OTP values, full identity numbers, banking PINs, or recovery secrets.",
+      "required_context_ids": [
+        "OPS-09::required-ticket-fields"
+      ],
+      "context_relevance": {
+        "OPS-09::required-ticket-fields": 3
+      },
+      "expected_citation_ids": [
+        "OPS-09::required-ticket-fields"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260805T141314-f2f8f436.json",
+        "run_id": "rag-20260805T141314-f2f8f436",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma3:4b",
+        "top_k": 3,
+        "question": "What information must the Help Desk record in an MFA recovery ticket?",
+        "answer": "To record in an MFA recovery ticket, you must include [OPS-09::required-ticket-fields] the following: employee identifier, corporate contact channel, affected payroll function, deadline if any, device-loss status, verification methods attempted, verification outcome, old-authenticator revocation status, re-enrolment outcome, retrieved policy version, and every escalation made. [OPS-09::employee-communication] You must also inform the employee of the recovery stage progress, their next action, and that the enrolment link expires after 30 minutes. Finally, [OPS-09::closure-evidence] you should close the ticket only after recording the old registration as revoked, the new device as enrolled, and a successful test sign-in.",
+        "retrieved_chunk_ids": [
+          "OPS-09::required-ticket-fields",
+          "OPS-09::employee-communication",
+          "OPS-09::closure-evidence"
+        ],
+        "retrieved_contexts": [
+          "[OPS-09::required-ticket-fields]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Required ticket fields\nRecord the employee identifier, corporate contact channel, affected payroll function, deadline if any, device-loss status, verification methods attempted, verification outcome, old-authenticator revocation status, re-enrolment outcome, retrieved policy version, and every escalation made. Do not copy passwords, OTP values, full identity numbers, banking PINs, or recovery secrets into the ticket.",
+          "[OPS-09::employee-communication]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Employee communication\nTell the employee which recovery stage is in progress, what action they must take next, and that the enrolment link expires after 30 minutes. If an escalation is required, provide the ticket identifier and the responsible queue. Do not promise a restoration time. State that the 30-minute figure is an initial-response target during staffed hours, not an access-restoration guarantee.",
+          "[OPS-09::closure-evidence]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Closure evidence\nClose the MFA recovery only after recording the old registration as revoked, the new device as enrolled, and the test sign-in as successful. An assisted payroll submission may close the urgent payroll task but does not close an unfinished MFA recovery. Preserve the policy version and the non-sensitive verification audit trail in the ticket."
+        ],
+        "retrieval_scores": [
+          0.66945,
+          0.608693,
+          0.595117
+        ],
+        "retrieval_latency_ms": 2197,
+        "generation_latency_ms": 3525,
+        "total_latency_ms": 5722
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 1,
+        "judged_relevant_count": 1,
+        "required_context_count": 1,
+        "required_context_hit_count": 1,
+        "precision_at_k": 0.3333333333333333,
+        "recall_at_k": 1.0,
+        "f1_at_k": 0.5,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "required_context_recall_at_k": 1.0,
+        "all_required_contexts_at_k": 1.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "OPS-09::required-ticket-fields",
+          "OPS-09::employee-communication",
+          "OPS-09::closure-evidence"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [
+          "OPS-09::closure-evidence",
+          "OPS-09::employee-communication"
+        ],
+        "missing_expected_citation_ids": [],
+        "citation_count": 3,
+        "citation_validity": 1.0,
+        "citation_precision": 0.3333333333333333,
+        "citation_recall": 1.0,
+        "citation_f1": 0.5,
+        "required_concept_coverage": 0.9166666666666666,
+        "concept_matches": [
+          {
+            "patterns": [
+              "employee identifier"
+            ],
+            "matched": true,
+            "match": "employee identifier"
+          },
+          {
+            "patterns": [
+              "corporate contact channel"
+            ],
+            "matched": true,
+            "match": "corporate contact channel"
+          },
+          {
+            "patterns": [
+              "affected payroll function"
+            ],
+            "matched": true,
+            "match": "affected payroll function"
+          },
+          {
+            "patterns": [
+              "deadline"
+            ],
+            "matched": true,
+            "match": "deadline"
+          },
+          {
+            "patterns": [
+              "device-loss status",
+              "device loss status"
+            ],
+            "matched": true,
+            "match": "device-loss status"
+          },
+          {
+            "patterns": [
+              "verification methods"
+            ],
+            "matched": true,
+            "match": "verification methods"
+          },
+          {
+            "patterns": [
+              "verification outcome"
+            ],
+            "matched": true,
+            "match": "verification outcome"
+          },
+          {
+            "patterns": [
+              "revocation status"
+            ],
+            "matched": true,
+            "match": "revocation status"
+          },
+          {
+            "patterns": [
+              "re-enrolment outcome",
+              "reenrolment outcome",
+              "re-enrollment outcome"
+            ],
+            "matched": true,
+            "match": "re-enrolment outcome"
+          },
+          {
+            "patterns": [
+              "policy version"
+            ],
+            "matched": true,
+            "match": "policy version"
+          },
+          {
+            "patterns": [
+              "every escalation",
+              "escalations"
+            ],
+            "matched": true,
+            "match": "every escalation"
+          },
+          {
+            "patterns": [
+              "do not.*(?:password|OTP|banking PIN|recovery secret)"
+            ],
+            "matched": false,
+            "match": null
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "deepeval_case_passed": true,
+      "deepeval_metrics": {
+        "answer_relevancy": {
+          "display_name": "Answer Relevancy",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response directly and completely addresses the question, outlining all the necessary information to record in an MFA recovery ticket.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "faithfulness": {
+          "display_name": "Faithfulness",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions identified – the actual output perfectly aligns with the retrieval context.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_precision": {
+          "display_name": "Contextual Precision",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because all retrieval contexts (nodes 1, 2, and 3) contain highly relevant information regarding what the Help Desk must record in an MFA recovery ticket, specifically listing 'employee identifier, corporate contact channel, affected payroll function, deadline if any, device-loss status, verification methods attempted, verification outcome, old-authenticator revocation status, re-enrolment outcome, retrieved policy version, and every escalation made.'.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_recall": {
+          "display_name": "Contextual Recall",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the expected output comprehensively outlines all necessary data points for a robust MFA recovery process, aligning perfectly with the information provided by node(s) in retrieval context.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_relevancy": {
+          "display_name": "Contextual Relevancy",
+          "value": 0.8571428571428571,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 0.86 because the context provides several key pieces of information that directly address what the Help Desk must record in an MFA recovery ticket, such as 'Record the employee identifier', 'verification methods attempted', and 'verification outcome'. Specifically, it highlights the need to document 'the old registration as revoked, the new device as enrolled, and the test sign-in as successful' before closing the ticket.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "case_id": "MFA-005",
+      "tags": [
+        "security",
+        "stolen-device",
+        "escalation"
+      ],
+      "question": "My phone was stolen and I received an unexpected MFA prompt. What must happen?",
+      "reference": "After identity is verified, revoke the stolen device's authenticator registration as soon as possible and record the loss in the ticket. Advise the employee to report suspected compromise to Security Operations. Because an unexpected MFA prompt was reported, Security escalation is mandatory and the case also receives the Security Review classification.",
+      "required_context_ids": [
+        "SEC-17::lost-or-stolen-devices",
+        "OPS-09::triage-categories"
+      ],
+      "context_relevance": {
+        "SEC-17::lost-or-stolen-devices": 3,
+        "OPS-09::triage-categories": 2
+      },
+      "expected_citation_ids": [
+        "SEC-17::lost-or-stolen-devices",
+        "OPS-09::triage-categories"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260805T141319-0744f114.json",
+        "run_id": "rag-20260805T141319-0744f114",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma3:4b",
+        "top_k": 3,
+        "question": "My phone was stolen and I received an unexpected MFA prompt. What must happen?",
+        "answer": "If you received an unexpected MFA prompt after your phone was stolen, you must contact the internal Help Desk through an approved corporate channel [SEC-17::standard-recovery-workflow]. The Help Desk will verify your identity, revoke the old authenticator registration, and begin device re-enrolment [SEC-17::standard-recovery-workflow]. Security escalation is mandatory if you report an unexpected MFA prompt [SEC-17::lost-or-stolen-devices].",
+        "retrieved_chunk_ids": [
+          "SEC-17::lost-or-stolen-devices",
+          "SEC-17::purpose-and-scope",
+          "SEC-17::standard-recovery-workflow"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::lost-or-stolen-devices]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Lost or stolen devices\nWhen a device is reported lost or stolen, the old authenticator registration must be revoked as soon as identity is verified. The Help Desk records the loss in the ticket and advises the employee to report suspected device compromise to Security Operations. Security escalation is mandatory if the employee reports an unexpected MFA prompt, a suspicious sign-in, or possible disclosure of a recovery code.",
+          "[SEC-17::purpose-and-scope]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Purpose and scope\nThis policy applies when an employee cannot complete multi-factor authentication (MFA) for the employee payroll portal. It covers a replaced, lost, stolen, damaged, or reset authenticator device. A payroll password reset and an MFA recovery are separate operations; completing one does not automatically complete the other.",
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case."
+        ],
+        "retrieval_scores": [
+          0.611917,
+          0.483307,
+          0.448705
+        ],
+        "retrieval_latency_ms": 2146,
+        "generation_latency_ms": 3122,
+        "total_latency_ms": 5267
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 1,
+        "judged_relevant_count": 2,
+        "required_context_count": 2,
+        "required_context_hit_count": 1,
+        "precision_at_k": 0.3333333333333333,
+        "recall_at_k": 0.5,
+        "f1_at_k": 0.4,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 0.5,
+        "ndcg_at_k": 0.7871546029909718,
+        "required_context_recall_at_k": 0.5,
+        "all_required_contexts_at_k": 0.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::lost-or-stolen-devices"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [
+          "SEC-17::standard-recovery-workflow"
+        ],
+        "missing_expected_citation_ids": [
+          "OPS-09::triage-categories"
+        ],
+        "citation_count": 2,
+        "citation_validity": 1.0,
+        "citation_precision": 0.5,
+        "citation_recall": 0.5,
+        "citation_f1": 0.5,
+        "required_concept_coverage": 0.4,
+        "concept_matches": [
+          {
+            "patterns": [
+              "revok(?:e|es).*authenticator"
+            ],
+            "matched": true,
+            "match": "revok(?:e|es).*authenticator"
+          },
+          {
+            "patterns": [
+              "record.*loss.*ticket"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "Security Operations"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "Security escalation.*mandatory",
+              "mandatory.*Security escalation"
+            ],
+            "matched": true,
+            "match": "Security escalation.*mandatory"
+          },
+          {
+            "patterns": [
+              "Security Review"
+            ],
+            "matched": false,
+            "match": null
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "deepeval_case_passed": true,
+      "deepeval_metrics": {
+        "answer_relevancy": {
+          "display_name": "Answer Relevancy",
+          "value": 0.8,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 0.80 because while the output offers helpful steps, it doesn't directly address the core question of 'What must happen?' when facing an unexpected MFA prompt due to a stolen phone; it focuses on the process rather than the immediate required action.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "faithfulness": {
+          "display_name": "Faithfulness",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no contradictions identified – the actual output perfectly aligns with the retrieval context.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_precision": {
+          "display_name": "Contextual Precision",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because all relevant nodes in the retrieval contexts – '[SEC-17::lost-or-stolen-devices]', '[SEC-17::purpose-and-scope]' and '[SEC-17::standard-recovery-workflow]' – are ranked highly and correctly identify the necessary steps when a phone is reported lost or stolen, specifically regarding MFA recovery as outlined in the Payroll MFA Recovery Policy. The nodes provide precise guidance on revocation, identity verification, and device re-enrolment.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_recall": {
+          "display_name": "Contextual Recall",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the expected output comprehensively reflects the procedures outlined in the Payroll MFA Recovery Policy (version 2.1), specifically node(s) [SEC-17::lost-or-stolen-devices] and [SEC-17::purpose-and-scope], detailing immediate actions like authenticator revocation, reporting to Security Operations, and mandatory escalation due to unexpected MFA prompts.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_relevancy": {
+          "display_name": "Contextual Relevancy",
+          "value": 0.8333333333333334,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 0.83 because the input asks about a stolen phone and MFA prompts, which aligns with the relevant statement: \"Security escalation is mandatory if the employee reports an unexpected MFA prompt, a suspicious sign-in, or possible disclosure of a recovery code.\" and \"The employee must contact the internal Help Desk through an approved corporate channel.\" The context directly addresses the urgency and procedure related to such security events.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "case_id": "MFA-006",
+      "tags": [
+        "uncertainty",
+        "service-target",
+        "no-guarantee"
+      ],
+      "question": "Will payroll access definitely be restored within 30 minutes?",
+      "reference": "No. Thirty minutes is the Help Desk's target for an initial response during staffed hours, not a guaranteed restoration time. Restoration depends on successful identity verification, provider availability, device readiness, and a successful test sign-in. The documents establish no universal restoration SLA.",
+      "required_context_ids": [
+        "SEC-17::service-targets-and-uncertainty"
+      ],
+      "context_relevance": {
+        "SEC-17::service-targets-and-uncertainty": 3
+      },
+      "expected_citation_ids": [
+        "SEC-17::service-targets-and-uncertainty"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260805T141324-493061c7.json",
+        "run_id": "rag-20260805T141324-493061c7",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma3:4b",
+        "top_k": 3,
+        "question": "Will payroll access definitely be restored within 30 minutes?",
+        "answer": "Payroll access will not definitely be restored within 30 minutes [SEC-17::service-targets-and-uncertainty]. The Help Desk targets an initial response within 30 minutes for payroll-blocking MFA incidents, but restoration depends on several factors and is not guaranteed [SEC-17::service-targets-and-uncertainty], [OPS-09::employee-communication].",
+        "retrieved_chunk_ids": [
+          "SEC-17::service-targets-and-uncertainty",
+          "OPS-09::employee-communication",
+          "SEC-17::payroll-deadline-fallback"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::service-targets-and-uncertainty]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Service targets and uncertainty\nDuring staffed hours, the Help Desk targets an initial response within 30 minutes for payroll-blocking MFA incidents. This is an operational target, not a guaranteed restoration time. Restoration depends on successful identity verification, provider availability, device readiness, and completion of the test sign-in. The documents do not establish a universal restoration SLA.",
+          "[OPS-09::employee-communication]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Employee communication\nTell the employee which recovery stage is in progress, what action they must take next, and that the enrolment link expires after 30 minutes. If an escalation is required, provide the ticket identifier and the responsible queue. Do not promise a restoration time. State that the 30-minute figure is an initial-response target during staffed hours, not an access-restoration guarantee.",
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access."
+        ],
+        "retrieval_scores": [
+          0.649479,
+          0.597331,
+          0.57937
+        ],
+        "retrieval_latency_ms": 2180,
+        "generation_latency_ms": 3134,
+        "total_latency_ms": 5314
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 1,
+        "judged_relevant_count": 1,
+        "required_context_count": 1,
+        "required_context_hit_count": 1,
+        "precision_at_k": 0.3333333333333333,
+        "recall_at_k": 1.0,
+        "f1_at_k": 0.5,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "required_context_recall_at_k": 1.0,
+        "all_required_contexts_at_k": 1.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "SEC-17::service-targets-and-uncertainty",
+          "OPS-09::employee-communication"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [
+          "OPS-09::employee-communication"
+        ],
+        "missing_expected_citation_ids": [],
+        "citation_count": 2,
+        "citation_validity": 1.0,
+        "citation_precision": 0.5,
+        "citation_recall": 1.0,
+        "citation_f1": 0.6666666666666666,
+        "required_concept_coverage": 0.2,
+        "concept_matches": [
+          {
+            "patterns": [
+              "initial response"
+            ],
+            "matched": true,
+            "match": "initial response"
+          },
+          {
+            "patterns": [
+              "not.*guaranteed restoration",
+              "not.*restoration guarantee"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "successful.*identity verification"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "test sign-in"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "no universal restoration SLA",
+              "does not establish.*SLA"
+            ],
+            "matched": false,
+            "match": null
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "deepeval_case_passed": false,
+      "deepeval_metrics": {
+        "answer_relevancy": {
+          "display_name": "Answer Relevancy",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response directly and accurately answers the question about payroll access restoration time, with no irrelevant information present.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "faithfulness": {
+          "display_name": "Faithfulness",
+          "value": 0.3333333333333333,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.33 because the actual output presents a contradiction by stating that payroll access won't be restored within 30 minutes, directly opposing the retrieval context which specifies a 30-minute target response time for payroll-blocking MFA incidents.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_precision": {
+          "display_name": "Contextual Precision",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because all retrieval contexts are highly relevant, with each node providing crucial information about payroll MFA recovery processes and targets within 30 minutes. Specifically, the first node highlights the Help Desk's operational target of an initial response within 30 minutes, while the second node details communication steps and the third node explains the fallback process if immediate restoration isn’t possible.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_recall": {
+          "display_name": "Contextual Recall",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the entire expected output aligns perfectly with the retrieval context, specifically node(s) in retrieval context [SEC-17::service-targets-and-uncertainty] and [OPS-09::employee-communication], detailing the Help Desk's target response time, the factors influencing restoration, and the absence of a universal SLA. This demonstrates exceptional contextual recall.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_relevancy": {
+          "display_name": "Contextual Relevancy",
+          "value": 0.8,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 0.80 because while the context mentions a ‘30-minute initial response target’ for payroll-blocking MFA incidents and emphasizes that it's 'not a guaranteed restoration time,' it also includes statements like 'Restoration depends on successful identity verification' which directly addresses the question about definite restoration within 30 minutes.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "case_id": "MFA-007",
+      "tags": [
+        "insufficient-evidence",
+        "contact-detail",
+        "hallucination"
+      ],
+      "question": "What is the Help Desk phone number for payroll MFA recovery?",
+      "reference": "The available documents do not provide a Help Desk phone number. They say only that the employee must contact the internal Help Desk through an approved corporate channel. Use an approved internal directory or corporate support channel rather than inventing a number.",
+      "required_context_ids": [
+        "SEC-17::standard-recovery-workflow"
+      ],
+      "context_relevance": {
+        "SEC-17::standard-recovery-workflow": 3
+      },
+      "expected_citation_ids": [
+        "SEC-17::standard-recovery-workflow"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260805T141329-2fe842f8.json",
+        "run_id": "rag-20260805T141329-2fe842f8",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma3:4b",
+        "top_k": 3,
+        "question": "What is the Help Desk phone number for payroll MFA recovery?",
+        "answer": "Available documents do not establish the Help Desk phone number for payroll MFA recovery. [SEC-17::standard-recovery-workflow] states that the employee must contact the internal Help Desk through an approved corporate channel.",
+        "retrieved_chunk_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::payroll-deadline-fallback",
+          "SEC-17::purpose-and-scope"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access.",
+          "[SEC-17::purpose-and-scope]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Purpose and scope\nThis policy applies when an employee cannot complete multi-factor authentication (MFA) for the employee payroll portal. It covers a replaced, lost, stolen, damaged, or reset authenticator device. A payroll password reset and an MFA recovery are separate operations; completing one does not automatically complete the other."
+        ],
+        "retrieval_scores": [
+          0.714645,
+          0.681039,
+          0.641782
+        ],
+        "retrieval_latency_ms": 2164,
+        "generation_latency_ms": 2950,
+        "total_latency_ms": 5114
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 1,
+        "judged_relevant_count": 1,
+        "required_context_count": 1,
+        "required_context_hit_count": 1,
+        "precision_at_k": 0.3333333333333333,
+        "recall_at_k": 1.0,
+        "f1_at_k": 0.5,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "required_context_recall_at_k": 1.0,
+        "all_required_contexts_at_k": 1.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "SEC-17::standard-recovery-workflow"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [],
+        "missing_expected_citation_ids": [],
+        "citation_count": 1,
+        "citation_validity": 1.0,
+        "citation_precision": 1.0,
+        "citation_recall": 1.0,
+        "citation_f1": 1.0,
+        "required_concept_coverage": 1.0,
+        "concept_matches": [
+          {
+            "patterns": [
+              "(?:do not|does not|don't).*provide.*(?:phone|number)",
+              "no.*phone number"
+            ],
+            "matched": true,
+            "match": "no.*phone number"
+          },
+          {
+            "patterns": [
+              "approved corporate channel"
+            ],
+            "matched": true,
+            "match": "approved corporate channel"
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "deepeval_case_passed": false,
+      "deepeval_metrics": {
+        "answer_relevancy": {
+          "display_name": "Answer Relevancy",
+          "value": 0.5,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.50 because while the response provides a relevant phone number, it includes extraneous information about general help desk procedures that doesn't directly address the specific question regarding payroll MFA recovery.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "faithfulness": {
+          "display_name": "Faithfulness",
+          "value": 0.5,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.50 because there are no identified contradictions between the actual output and the retrieval context, suggesting a moderate level of alignment.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_precision": {
+          "display_name": "Contextual Precision",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the first node provides a direct answer to the question about contacting the Help Desk, while the second node correctly identifies that it lacks a specific phone number and the third node discusses the purpose of the policy, which is irrelevant to the user's query.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_recall": {
+          "display_name": "Contextual Recall",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the expected output effectively summarizes the policy regarding Help Desk contact, referencing specific nodes (1 & 2) within the Payroll MFA Recovery Policy document ([SEC-17::standard-recovery-workflow] and [SEC-17::payroll-deadline-fallback]) to explain approved channels for contacting the Help Desk and outlining the circumstances under which this support is provided.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_relevancy": {
+          "display_name": "Contextual Relevancy",
+          "value": 0.7142857142857143,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 0.71 because while the context mentions contacting the Help Desk through an approved channel and outlines their process for payroll MFA recovery, it does not directly provide the phone number requested in the input – ‘What is the Help Desk phone number for payroll MFA recovery?’ as stated: 'The employee must contact the internal Help Desk through an approved corporate channel.'",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "case_id": "MFA-008",
+      "tags": [
+        "closure",
+        "workflow-state",
+        "negative-case"
+      ],
+      "question": "An assisted payroll change is complete, but the new-device test sign-in failed. Can the MFA recovery ticket be closed?",
+      "reference": "No. Close the MFA recovery only after the old registration is recorded as revoked, the new device as enrolled, and the test sign-in as successful. Completing an assisted payroll submission may close the urgent payroll task, but it does not close an unfinished MFA recovery.",
+      "required_context_ids": [
+        "OPS-09::closure-evidence"
+      ],
+      "context_relevance": {
+        "OPS-09::closure-evidence": 3
+      },
+      "expected_citation_ids": [
+        "OPS-09::closure-evidence"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260805T141334-1e67b07d.json",
+        "run_id": "rag-20260805T141334-1e67b07d",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma3:4b",
+        "top_k": 3,
+        "question": "An assisted payroll change is complete, but the new-device test sign-in failed. Can the MFA recovery ticket be closed?",
+        "answer": "No, the MFA recovery ticket cannot be closed [OPS-09::closure-evidence]. The runbook states that closure of the MFA recovery only occurs after recording the old registration as revoked, the new device as enrolled, and the test sign-in as successful [OPS-09::closure-evidence].",
+        "retrieved_chunk_ids": [
+          "OPS-09::closure-evidence",
+          "SEC-17::payroll-deadline-fallback",
+          "SEC-17::standard-recovery-workflow"
+        ],
+        "retrieved_contexts": [
+          "[OPS-09::closure-evidence]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Closure evidence\nClose the MFA recovery only after recording the old registration as revoked, the new device as enrolled, and the test sign-in as successful. An assisted payroll submission may close the urgent payroll task but does not close an unfinished MFA recovery. Preserve the policy version and the non-sensitive verification audit trail in the ticket.",
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access.",
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case."
+        ],
+        "retrieval_scores": [
+          0.74664,
+          0.705408,
+          0.676333
+        ],
+        "retrieval_latency_ms": 2145,
+        "generation_latency_ms": 2873,
+        "total_latency_ms": 5018
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 1,
+        "judged_relevant_count": 1,
+        "required_context_count": 1,
+        "required_context_hit_count": 1,
+        "precision_at_k": 0.3333333333333333,
+        "recall_at_k": 1.0,
+        "f1_at_k": 0.5,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "required_context_recall_at_k": 1.0,
+        "all_required_contexts_at_k": 1.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "OPS-09::closure-evidence"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [],
+        "missing_expected_citation_ids": [],
+        "citation_count": 1,
+        "citation_validity": 1.0,
+        "citation_precision": 1.0,
+        "citation_recall": 1.0,
+        "citation_f1": 1.0,
+        "required_concept_coverage": 0.75,
+        "concept_matches": [
+          {
+            "patterns": [
+              "old registration.*revoked"
+            ],
+            "matched": true,
+            "match": "old registration.*revoked"
+          },
+          {
+            "patterns": [
+              "new device.*enrolled"
+            ],
+            "matched": true,
+            "match": "new device.*enrolled"
+          },
+          {
+            "patterns": [
+              "test sign-in.*successful"
+            ],
+            "matched": true,
+            "match": "test sign-in.*successful"
+          },
+          {
+            "patterns": [
+              "assisted payroll submission.*does not close",
+              "does not close.*MFA recovery"
+            ],
+            "matched": false,
+            "match": null
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "deepeval_case_passed": false,
+      "deepeval_metrics": {
+        "answer_relevancy": {
+          "display_name": "Answer Relevancy",
+          "value": 0.75,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 0.75 because while the response acknowledges the MFA recovery ticket, it doesn't directly address the core question of whether the sign-in failure impacts its closure, as highlighted in the irrelevant statement.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "faithfulness": {
+          "display_name": "Faithfulness",
+          "value": 0.5,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.50 because the contradiction highlights a discrepancy between the retrieval context stating MFA recovery requires specific actions (recording old registration, enrolling new device, successful test sign-in) and the actual output claiming it can be closed without them.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_precision": {
+          "display_name": "Contextual Precision",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because all retrieval contexts are highly relevant and ranked appropriately. The first node clearly states the evidence needed to close an MFA recovery, the second confirms that a payroll change doesn't resolve an open MFA recovery, and the third outlines the standard recovery workflow, all directly addressing the input question about closing the MFA recovery ticket.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_recall": {
+          "display_name": "Contextual Recall",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the expected output clearly outlines the precise steps required to complete MFA recovery – recording revocation, enrollment of a new device, and a successful test sign-in (sentence 1), directly referencing node(s) in retrieval context [OPS-09::closure-evidence] within the Payroll MFA Help-Desk Runbook.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_relevancy": {
+          "display_name": "Contextual Relevancy",
+          "value": 0.6666666666666666,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.67 because while the input asks \"Can the MFA recovery ticket be closed?\" and the retrieval context includes that exact question, it also contains irrelevant information like \"An assisted payroll change is complete...\" and details about Help Desk procedures. The core issue revolves around closing the MFA recovery ticket, but the context provides broader operational steps which don't directly address this specific request.",
+          "error": null,
+          "evaluation_model": "gemma3:4b (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    }
+  ],
+  "summary": {
+    "case_count": 8,
+    "retrieval_macro": {
+      "precision_at_k": 0.375,
+      "recall_at_k": 0.8125,
+      "f1_at_k": 0.5,
+      "hit_at_k": 1.0,
+      "reciprocal_rank_at_k": 1.0,
+      "average_precision_at_k": 0.8125,
+      "ndcg_at_k": 0.8766811235652361,
+      "required_context_recall_at_k": 0.8125,
+      "all_required_contexts_at_k": 0.625
+    },
+    "retrieval_micro": {
+      "precision_at_k": 0.375,
+      "recall_at_k": 0.75
+    },
+    "deterministic_macro": {
+      "citation_validity": 1.0,
+      "citation_precision": 0.6458333333333334,
+      "citation_recall": 0.75,
+      "citation_f1": 0.6541666666666667,
+      "required_concept_coverage": 0.6333333333333333,
+      "forbidden_claim_pass": 1.0
+    },
+    "deepeval_metrics": {
+      "answer_relevancy": {
+        "mean_score": 0.85625,
+        "attempts": 8,
+        "scored": 8,
+        "errors": 0,
+        "passes": 7,
+        "pass_rate": 0.875
+      },
+      "contextual_precision": {
+        "mean_score": 1.0,
+        "attempts": 8,
+        "scored": 8,
+        "errors": 0,
+        "passes": 8,
+        "pass_rate": 1.0
+      },
+      "contextual_recall": {
+        "mean_score": 1.0,
+        "attempts": 8,
+        "scored": 8,
+        "errors": 0,
+        "passes": 8,
+        "pass_rate": 1.0
+      },
+      "contextual_relevancy": {
+        "mean_score": 0.7680631868131869,
+        "attempts": 8,
+        "scored": 8,
+        "errors": 0,
+        "passes": 6,
+        "pass_rate": 0.75
+      },
+      "faithfulness": {
+        "mean_score": 0.6145833333333334,
+        "attempts": 8,
+        "scored": 8,
+        "errors": 0,
+        "passes": 3,
+        "pass_rate": 0.375
+      }
+    },
+    "deepeval_metric_attempts": 40,
+    "deepeval_metric_errors": 0,
+    "deepeval_error_rate": 0.0,
+    "deepeval_case_attempts": 8,
+    "deepeval_case_passes": 3,
+    "deepeval_case_pass_rate": 0.375,
+    "aliases": {
+      "hit_rate_at_k": 1.0,
+      "mrr_at_k": 1.0,
+      "map_at_k": 0.8125,
+      "mean_ndcg_at_k": 0.8766811235652361
+    }
+  }
+}

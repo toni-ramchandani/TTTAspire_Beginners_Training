@@ -1,0 +1,308 @@
+{
+  "schema_version": "1.0",
+  "framework": "deepeval",
+  "experiment_id": "deepeval-20260807T054437-9046aed3",
+  "created_at_utc": "2026-08-07T05:44:37.135758+00:00",
+  "mode": "live",
+  "requested_top_k": 3,
+  "metric_profile": "core",
+  "thresholds": {
+    "answer_relevancy": 0.7,
+    "faithfulness": 0.7,
+    "contextual_precision": 0.7,
+    "contextual_recall": 0.7,
+    "contextual_relevancy": 0.7,
+    "policy_correctness": 0.7
+  },
+  "threshold_note": "Defaults are diagnostic starting points and require human calibration before use as release gates.",
+  "judge": {
+    "provider": "ollama",
+    "model": "gemma4:latest",
+    "base_url": "http://localhost:11434",
+    "max_concurrent": 4
+  },
+  "dependency_versions": {
+    "deepeval": "4.1.5",
+    "ollama": "0.6.2",
+    "openai": "2.52.0",
+    "pydantic": "2.13.4",
+    "python-dotenv": "1.2.2",
+    "numpy": "2.5.1"
+  },
+  "cases": [
+    {
+      "case_id": "MFA-001",
+      "tags": [
+        "recovery",
+        "happy-path",
+        "completeness"
+      ],
+      "question": "I changed phones and cannot complete MFA. How do I regain payroll access?",
+      "reference": "Contact the internal Help Desk through an approved corporate channel. After identity verification succeeds, the Help Desk revokes the unavailable authenticator and starts device re-enrolment. A single-use enrolment link is sent to the corporate account and expires after 30 minutes. Register the new device and complete a successful test sign-in; recovery is complete only after that test succeeds. If required verification fails, recovery must stop and be escalated.",
+      "required_context_ids": [
+        "SEC-17::standard-recovery-workflow",
+        "SEC-17::device-re-enrolment"
+      ],
+      "context_relevance": {
+        "SEC-17::standard-recovery-workflow": 3,
+        "SEC-17::device-re-enrolment": 3
+      },
+      "expected_citation_ids": [
+        "SEC-17::standard-recovery-workflow",
+        "SEC-17::device-re-enrolment"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260807T054222-141566d5.json",
+        "run_id": "rag-20260807T054222-141566d5",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma4:latest",
+        "top_k": 3,
+        "question": "I changed phones and cannot complete MFA. How do I regain payroll access?",
+        "answer": "To regain payroll access after changing phones and being unable to complete MFA, you must follow the standard recovery workflow:\n\n1.  Contact the internal Help Desk through an approved corporate channel [SEC-17::standard-recovery-workflow].\n2.  The Help Desk will first verify your identity, revoke the unavailable authenticator, and then begin device re-enrolment [SEC-17::standard-recovery-workflow].\n3.  Normal payroll access is restored only after you complete the new enrolment process [SEC-17::standard-recovery-workflow].\n\n**Note on Deadlines:**\nIf you have a payroll submission deadline within four hours and cannot complete device re-enrolment, the Help Desk will create an urgent Payroll Support ticket. Payroll Support may assist with submitting the required change through an approved assisted process after independently verifying your request; however, this fallback does not disable or bypass MFA, nor does it restore portal access [SEC-17::payroll-deadline-fallback].\n\n*This policy applies to situations where you cannot complete multi-factor authentication (MFA) due to a replaced, lost, stolen, damaged, or reset authenticator device [SEC-17::purpose-and-scope].*",
+        "retrieved_chunk_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::purpose-and-scope",
+          "SEC-17::payroll-deadline-fallback"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[SEC-17::purpose-and-scope]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Purpose and scope\nThis policy applies when an employee cannot complete multi-factor authentication (MFA) for the employee payroll portal. It covers a replaced, lost, stolen, damaged, or reset authenticator device. A payroll password reset and an MFA recovery are separate operations; completing one does not automatically complete the other.",
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access."
+        ],
+        "retrieval_scores": [
+          0.678826,
+          0.66397,
+          0.624837
+        ],
+        "retrieval_latency_ms": 2181,
+        "generation_latency_ms": 9329,
+        "total_latency_ms": 11510
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 1,
+        "judged_relevant_count": 2,
+        "required_context_count": 2,
+        "required_context_hit_count": 1,
+        "precision_at_k": 0.3333333333333333,
+        "recall_at_k": 0.5,
+        "f1_at_k": 0.4,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 0.5,
+        "ndcg_at_k": 0.6131471927654584,
+        "required_context_recall_at_k": 0.5,
+        "all_required_contexts_at_k": 0.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::payroll-deadline-fallback",
+          "SEC-17::purpose-and-scope"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [
+          "SEC-17::payroll-deadline-fallback",
+          "SEC-17::purpose-and-scope"
+        ],
+        "missing_expected_citation_ids": [
+          "SEC-17::device-re-enrolment"
+        ],
+        "citation_count": 3,
+        "citation_validity": 1.0,
+        "citation_precision": 0.3333333333333333,
+        "citation_recall": 0.5,
+        "citation_f1": 0.4,
+        "required_concept_coverage": 0.8,
+        "concept_matches": [
+          {
+            "patterns": [
+              "Help Desk"
+            ],
+            "matched": true,
+            "match": "Help Desk"
+          },
+          {
+            "patterns": [
+              "verif(?:y|ication).*identity",
+              "identity verification"
+            ],
+            "matched": true,
+            "match": "verif(?:y|ication).*identity"
+          },
+          {
+            "patterns": [
+              "revok(?:e|es|ed).*authenticator"
+            ],
+            "matched": true,
+            "match": "revok(?:e|es|ed).*authenticator"
+          },
+          {
+            "patterns": [
+              "re-enrol",
+              "reenrol",
+              "re-enroll",
+              "reenroll"
+            ],
+            "matched": true,
+            "match": "re-enrol"
+          },
+          {
+            "patterns": [
+              "test sign-in.*success",
+              "successful test sign-in"
+            ],
+            "matched": false,
+            "match": null
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "deepeval_case_passed": false,
+      "deepeval_metrics": {
+        "answer_relevancy": {
+          "display_name": "Answer Relevancy",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the response was perfectly relevant, directly addressing the user's need to regain payroll access after changing phones and encountering MFA issues. Since there were no irrelevant statements found, the answer is excellent!",
+          "error": null,
+          "evaluation_model": "gemma4:latest (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "faithfulness": {
+          "display_name": "Faithfulness",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because there are no listed contradictions, indicating that the actual output is perfectly faithful to the retrieval context! Great job!",
+          "error": null,
+          "evaluation_model": "gemma4:latest (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_precision": {
+          "display_name": "Contextual Precision",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because the retrieval context successfully placed all necessary information at the top. The node in retrieval contexts at Rank 1, which states that \"This document provides the core procedural steps required for recovery...\", contains the essential step-by-step instructions needed to answer the query. Conversely, the nodes at Rank 2 and Rank 3 are correctly ranked lower because they provide less useful information; specifically, the node at Rank 2 only defines the scope (\"cannot complete multi-factor authentication (MFA) for the employee payroll portal\") without providing actionable steps, and the node at Rank 3 discusses a different scenario (\"Payroll deadline fallback\"), making them irrelevant to the core recovery process.",
+          "error": null,
+          "evaluation_model": "gemma4:latest (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_recall": {
+          "display_name": "Contextual Recall",
+          "value": 0.6,
+          "threshold": 0.7,
+          "passed": false,
+          "reason": "The score is 0.60 because while node 1 successfully supports the initial steps of contacting the Help Desk, identity verification, and handling failure protocols (EO sentences 1, 2, and 5), it fails to provide details regarding the single-use enrollment link/expiration time (EO sentence 3) or specify that recovery is only complete after a successful test sign-in (EO sentence 4).",
+          "error": null,
+          "evaluation_model": "gemma4:latest (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "contextual_relevancy": {
+          "display_name": "Contextual Relevancy",
+          "value": 1.0,
+          "threshold": 0.7,
+          "passed": true,
+          "reason": "The score is 1.00 because this context is spot-on! It directly addresses the user's problem of MFA failure after a device change, as evidenced by statements like 'This policy applies when an employee cannot complete multi-factor authentication (MFA)' and 'It covers a replaced, lost, stolen, damaged, or reset authenticator device.' The document provides clear next steps, instructing that 'The employee must contact the internal Help Desk through an approved corporate channel.'",
+          "error": null,
+          "evaluation_model": "gemma4:latest (Ollama)",
+          "evaluation_cost": 0.0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      }
+    }
+  ],
+  "summary": {
+    "case_count": 1,
+    "retrieval_macro": {
+      "precision_at_k": 0.3333333333333333,
+      "recall_at_k": 0.5,
+      "f1_at_k": 0.4,
+      "hit_at_k": 1.0,
+      "reciprocal_rank_at_k": 1.0,
+      "average_precision_at_k": 0.5,
+      "ndcg_at_k": 0.6131471927654584,
+      "required_context_recall_at_k": 0.5,
+      "all_required_contexts_at_k": 0.0
+    },
+    "retrieval_micro": {
+      "precision_at_k": 0.3333333333333333,
+      "recall_at_k": 0.5
+    },
+    "deterministic_macro": {
+      "citation_validity": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 0.5,
+      "citation_f1": 0.4,
+      "required_concept_coverage": 0.8,
+      "forbidden_claim_pass": 1.0
+    },
+    "deepeval_metrics": {
+      "answer_relevancy": {
+        "mean_score": 1.0,
+        "attempts": 1,
+        "scored": 1,
+        "errors": 0,
+        "passes": 1,
+        "pass_rate": 1.0
+      },
+      "contextual_precision": {
+        "mean_score": 1.0,
+        "attempts": 1,
+        "scored": 1,
+        "errors": 0,
+        "passes": 1,
+        "pass_rate": 1.0
+      },
+      "contextual_recall": {
+        "mean_score": 0.6,
+        "attempts": 1,
+        "scored": 1,
+        "errors": 0,
+        "passes": 0,
+        "pass_rate": 0.0
+      },
+      "contextual_relevancy": {
+        "mean_score": 1.0,
+        "attempts": 1,
+        "scored": 1,
+        "errors": 0,
+        "passes": 1,
+        "pass_rate": 1.0
+      },
+      "faithfulness": {
+        "mean_score": 1.0,
+        "attempts": 1,
+        "scored": 1,
+        "errors": 0,
+        "passes": 1,
+        "pass_rate": 1.0
+      }
+    },
+    "deepeval_metric_attempts": 5,
+    "deepeval_metric_errors": 0,
+    "deepeval_error_rate": 0.0,
+    "deepeval_case_attempts": 1,
+    "deepeval_case_passes": 0,
+    "deepeval_case_pass_rate": 0.0,
+    "aliases": {
+      "hit_rate_at_k": 1.0,
+      "mrr_at_k": 1.0,
+      "map_at_k": 0.5,
+      "mean_ndcg_at_k": 0.6131471927654584
+    }
+  }
+}
