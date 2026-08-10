@@ -1,0 +1,1190 @@
+{
+  "schema_version": "1.0",
+  "framework": "langsmith",
+  "framework_version": "0.10.17",
+  "report_id": "langsmith-4e2e359d0218",
+  "created_at_utc": "2026-08-10T06:30:45.056869+00:00",
+  "mode": "hosted-live",
+  "upload_results": true,
+  "experiment_name": "candidate-top5-0af07229",
+  "experiment_id": "b40c3cd3-80fb-4d83-bf3d-0ed427757a96",
+  "experiment_url": "https://apac.smith.langchain.com/o/6ca48039-e725-4dde-916c-c6f163d392df/datasets/6828c660-fb4a-4cde-bc19-96da2a9cf4da/compare?selectedSessions=b40c3cd3-80fb-4d83-bf3d-0ed427757a96",
+  "project_name": "payroll-mfa-rag-observability",
+  "dataset_name": "payroll-mfa-rag-golden-v1",
+  "dataset_version": "payroll-mfa-golden-v1",
+  "metric_profile": "full",
+  "rag_provider": "openai",
+  "top_k": 5,
+  "num_repetitions": 1,
+  "summary": {
+    "case_count": 8,
+    "run_error_count": 0,
+    "mean_feedback_scores": {
+      "citation_recall": 0.75,
+      "citation_validity": 0.875,
+      "exact_reference_match": 0.0,
+      "forbidden_claim_pass": 1.0,
+      "required_concept_coverage": 0.5895833333333333,
+      "required_context_recall": 0.9375
+    },
+    "scored_case_counts": {
+      "citation_recall": 8,
+      "citation_validity": 8,
+      "exact_reference_match": 8,
+      "forbidden_claim_pass": 8,
+      "required_concept_coverage": 8,
+      "required_context_recall": 8
+    }
+  },
+  "cases": [
+    {
+      "case_id": "MFA-006",
+      "inputs": {
+        "case_id": "MFA-006",
+        "question": "Will payroll access definitely be restored within 30 minutes?"
+      },
+      "actual_outputs": {
+        "case_id": "MFA-006",
+        "answer": "The available documents do not establish that payroll access will definitely be restored within 30 minutes. While the Help Desk targets an initial response within 30 minutes for payroll-blocking MFA incidents, this is not a guaranteed restoration time. Restoration depends on various factors, including successful identity verification and device readiness, as stated in [SEC-17::service-targets-and-uncertainty] and [OPS-09::employee-communication].",
+        "retrieved_chunk_ids": [
+          "SEC-17::service-targets-and-uncertainty",
+          "OPS-09::employee-communication",
+          "SEC-17::payroll-deadline-fallback",
+          "SEC-17::standard-recovery-workflow",
+          "OPS-09::triage-categories"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::service-targets-and-uncertainty]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Service targets and uncertainty\nDuring staffed hours, the Help Desk targets an initial response within 30 minutes for payroll-blocking MFA incidents. This is an operational target, not a guaranteed restoration time. Restoration depends on successful identity verification, provider availability, device readiness, and completion of the test sign-in. The documents do not establish a universal restoration SLA.",
+          "[OPS-09::employee-communication]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Employee communication\nTell the employee which recovery stage is in progress, what action they must take next, and that the enrolment link expires after 30 minutes. If an escalation is required, provide the ticket identifier and the responsible queue. Do not promise a restoration time. State that the 30-minute figure is an initial-response target during staffed hours, not an access-restoration guarantee.",
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access.",
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[OPS-09::triage-categories]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Triage categories\nClassify an MFA request as `P2 Payroll Blocking` when the employee cannot access payroll and has a submission deadline within four hours. Classify it as `P3 Access Recovery` when payroll is unavailable but no four-hour deadline exists. Use `Security Review` in addition to the access category when the device is stolen, an unexpected MFA prompt occurred, or compromise is suspected."
+        ],
+        "retrieval_scores": [
+          0.602366,
+          0.570473,
+          0.556647,
+          0.49976,
+          0.490437
+        ],
+        "provider": "openai",
+        "embedding_model": "text-embedding-3-small",
+        "generation_model": "gpt-4o-mini",
+        "retrieval_latency_ms": 1075,
+        "generation_latency_ms": 2009,
+        "total_latency_ms": 3084,
+        "canonical_trace_id": "rag-20260810T062842-94f494a7",
+        "canonical_trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260810T062842-94f494a7.json",
+        "langsmith_rag_run_id": "019fea5b-e80c-7a90-8ddd-4b0837d46488"
+      },
+      "reference_outputs": {
+        "answer": "No. Thirty minutes is the Help Desk's target for an initial response during staffed hours, not a guaranteed restoration time. Restoration depends on successful identity verification, provider availability, device readiness, and a successful test sign-in. The documents establish no universal restoration SLA.",
+        "context_relevance": {
+          "SEC-17::service-targets-and-uncertainty": 3
+        },
+        "required_concepts": [
+          [
+            "initial response"
+          ],
+          [
+            "not.*guaranteed restoration",
+            "not.*restoration guarantee"
+          ],
+          [
+            "successful.*identity verification"
+          ],
+          [
+            "test sign-in"
+          ],
+          [
+            "no universal restoration SLA",
+            "does not establish.*SLA"
+          ]
+        ],
+        "required_context_ids": [
+          "SEC-17::service-targets-and-uncertainty"
+        ],
+        "expected_citation_ids": [
+          "SEC-17::service-targets-and-uncertainty"
+        ],
+        "forbidden_claim_patterns": [
+          "access (?:is|will be) (?:definitely )?restored (?:in|within) (?:30|thirty) minutes"
+        ]
+      },
+      "example_metadata": {
+        "tags": [
+          "uncertainty",
+          "service-target",
+          "no-guarantee"
+        ],
+        "source": "evaluation/data/golden_cases.json",
+        "case_id": "MFA-006",
+        "dataset_split": [
+          "teaching",
+          "payroll-mfa-golden-v1"
+        ],
+        "dataset_version": "payroll-mfa-golden-v1"
+      },
+      "run": {
+        "id": "019fea5b-e781-7a32-9828-44c653759491",
+        "name": "Target",
+        "status": "success",
+        "error": null,
+        "start_time": "2026-08-10T06:28:39.425289+00:00",
+        "end_time": "2026-08-10T06:28:42.653973+00:00"
+      },
+      "feedback": {
+        "required_context_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "All required contexts were retrieved.",
+          "correction": null,
+          "extra": null
+        },
+        "required_concept_coverage": {
+          "score": 0.6,
+          "value": null,
+          "comment": "Matched 3 of 5 required concept groups.",
+          "correction": null,
+          "extra": null
+        },
+        "forbidden_claim_pass": {
+          "score": 1.0,
+          "value": null,
+          "comment": "No forbidden claim pattern matched.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_validity": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Every citation names a retrieved chunk.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Expected citations found: 1/1",
+          "correction": null,
+          "extra": null
+        },
+        "exact_reference_match": {
+          "score": false,
+          "value": null,
+          "comment": "Exact match failed; this does not by itself prove semantic incorrectness.",
+          "correction": null,
+          "extra": null
+        }
+      }
+    },
+    {
+      "case_id": "MFA-008",
+      "inputs": {
+        "case_id": "MFA-008",
+        "question": "An assisted payroll change is complete, but the new-device test sign-in failed. Can the MFA recovery ticket be closed?"
+      },
+      "actual_outputs": {
+        "case_id": "MFA-008",
+        "answer": "The MFA recovery ticket cannot be closed because the new-device test sign-in failed. According to the Payroll MFA Help-Desk Runbook, the MFA recovery can only be closed after the test sign-in is successful. An assisted payroll submission does not affect the status of the MFA recovery; it specifically states that \"an assisted payroll submission may close the urgent payroll task but does not close an unfinished MFA recovery\" [OPS-09::closure-evidence]. Furthermore, the Payroll MFA Recovery Policy specifies that recovery is complete only after the test sign-in succeeds [SEC-17::device-re-enrolment].",
+        "retrieved_chunk_ids": [
+          "OPS-09::closure-evidence",
+          "SEC-17::device-re-enrolment",
+          "OPS-09::technician-procedure",
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::lost-or-stolen-devices"
+        ],
+        "retrieved_contexts": [
+          "[OPS-09::closure-evidence]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Closure evidence\nClose the MFA recovery only after recording the old registration as revoked, the new device as enrolled, and the test sign-in as successful. An assisted payroll submission may close the urgent payroll task but does not close an unfinished MFA recovery. Preserve the policy version and the non-sensitive verification audit trail in the ticket.",
+          "[SEC-17::device-re-enrolment]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Device re-enrolment\nAfter successful verification, the Help Desk revokes the old authenticator registration and issues a single-use enrolment link to the employee's corporate account. The link expires after 30 minutes and must not be forwarded. The employee registers the new device and completes a test sign-in. Recovery is complete only after the test sign-in succeeds.",
+          "[OPS-09::technician-procedure]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Technician procedure\nOpen the recovery ticket before changing authentication state. Confirm the request through an approved corporate channel, perform the two-factor identity check defined by SEC-17, record only the verification method and outcome, revoke the old registration, send the single-use enrolment link to the corporate account, and observe or confirm a successful test sign-in. If a step fails, record the failure and follow the escalation rules instead of improvising a shortcut.",
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[SEC-17::lost-or-stolen-devices]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Lost or stolen devices\nWhen a device is reported lost or stolen, the old authenticator registration must be revoked as soon as identity is verified. The Help Desk records the loss in the ticket and advises the employee to report suspected device compromise to Security Operations. Security escalation is mandatory if the employee reports an unexpected MFA prompt, a suspicious sign-in, or possible disclosure of a recovery code."
+        ],
+        "retrieval_scores": [
+          0.76602,
+          0.732972,
+          0.727508,
+          0.710657,
+          0.703909
+        ],
+        "provider": "openai",
+        "embedding_model": "text-embedding-3-small",
+        "generation_model": "gpt-4o-mini",
+        "retrieval_latency_ms": 977,
+        "generation_latency_ms": 2964,
+        "total_latency_ms": 3941,
+        "canonical_trace_id": "rag-20260810T062843-14307a87",
+        "canonical_trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260810T062843-14307a87.json",
+        "langsmith_rag_run_id": "019fea5b-e804-7303-b9b6-f7f3a5b8face"
+      },
+      "reference_outputs": {
+        "answer": "No. Close the MFA recovery only after the old registration is recorded as revoked, the new device as enrolled, and the test sign-in as successful. Completing an assisted payroll submission may close the urgent payroll task, but it does not close an unfinished MFA recovery.",
+        "context_relevance": {
+          "OPS-09::closure-evidence": 3
+        },
+        "required_concepts": [
+          [
+            "old registration.*revoked"
+          ],
+          [
+            "new device.*enrolled"
+          ],
+          [
+            "test sign-in.*successful"
+          ],
+          [
+            "assisted payroll submission.*does not close",
+            "does not close.*MFA recovery"
+          ]
+        ],
+        "required_context_ids": [
+          "OPS-09::closure-evidence"
+        ],
+        "expected_citation_ids": [
+          "OPS-09::closure-evidence"
+        ],
+        "forbidden_claim_patterns": [
+          "assisted payroll (?:change|submission) (?:allows|permits|means).*MFA recovery.*clos"
+        ]
+      },
+      "example_metadata": {
+        "tags": [
+          "closure",
+          "workflow-state",
+          "negative-case"
+        ],
+        "source": "evaluation/data/golden_cases.json",
+        "case_id": "MFA-008",
+        "dataset_split": [
+          "teaching",
+          "payroll-mfa-golden-v1"
+        ],
+        "dataset_version": "payroll-mfa-golden-v1"
+      },
+      "run": {
+        "id": "019fea5b-e782-76a2-a569-8efbf4ac1001",
+        "name": "Target",
+        "status": "success",
+        "error": null,
+        "start_time": "2026-08-10T06:28:39.426290+00:00",
+        "end_time": "2026-08-10T06:28:43.502098+00:00"
+      },
+      "feedback": {
+        "required_context_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "All required contexts were retrieved.",
+          "correction": null,
+          "extra": null
+        },
+        "required_concept_coverage": {
+          "score": 0.5,
+          "value": null,
+          "comment": "Matched 2 of 4 required concept groups.",
+          "correction": null,
+          "extra": null
+        },
+        "forbidden_claim_pass": {
+          "score": 1.0,
+          "value": null,
+          "comment": "No forbidden claim pattern matched.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_validity": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Every citation names a retrieved chunk.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Expected citations found: 1/1",
+          "correction": null,
+          "extra": null
+        },
+        "exact_reference_match": {
+          "score": false,
+          "value": null,
+          "comment": "Exact match failed; this does not by itself prove semantic incorrectness.",
+          "correction": null,
+          "extra": null
+        }
+      }
+    },
+    {
+      "case_id": "MFA-007",
+      "inputs": {
+        "case_id": "MFA-007",
+        "question": "What is the Help Desk phone number for payroll MFA recovery?"
+      },
+      "actual_outputs": {
+        "case_id": "MFA-007",
+        "answer": "The available documents do not provide the Help Desk phone number for payroll MFA recovery.",
+        "retrieved_chunk_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::payroll-deadline-fallback",
+          "SEC-17::identity-verification",
+          "SEC-17::service-targets-and-uncertainty",
+          "OPS-09::support-boundaries"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access.",
+          "[SEC-17::identity-verification]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Identity verification\nBefore changing MFA, the Help Desk must verify the employee identifier and two approved factors from the identity record. Approved factors may include a callback to a registered corporate number, confirmation through the signed-in corporate device, or an in-person identity check. The technician must never request the employee's password, one-time passcode, full national identity number, or personal banking PIN.",
+          "[SEC-17::service-targets-and-uncertainty]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Service targets and uncertainty\nDuring staffed hours, the Help Desk targets an initial response within 30 minutes for payroll-blocking MFA incidents. This is an operational target, not a guaranteed restoration time. Restoration depends on successful identity verification, provider availability, device readiness, and completion of the test sign-in. The documents do not establish a universal restoration SLA.",
+          "[OPS-09::support-boundaries]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Support boundaries\nThe Help Desk owns identity verification, authenticator revocation, re-enrolment, and the recovery ticket. Payroll Support owns the approved assisted-submission process. Security Operations owns compromise investigation. A manager may confirm business urgency but cannot perform or waive identity verification."
+        ],
+        "retrieval_scores": [
+          0.774827,
+          0.730788,
+          0.719658,
+          0.706647,
+          0.694844
+        ],
+        "provider": "openai",
+        "embedding_model": "text-embedding-3-small",
+        "generation_model": "gpt-4o-mini",
+        "retrieval_latency_ms": 284,
+        "generation_latency_ms": 1255,
+        "total_latency_ms": 1539,
+        "canonical_trace_id": "rag-20260810T062845-8e3f6605",
+        "canonical_trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260810T062845-8e3f6605.json",
+        "langsmith_rag_run_id": "019fea5b-f76f-7d50-bb85-a01e214992ef"
+      },
+      "reference_outputs": {
+        "answer": "The available documents do not provide a Help Desk phone number. They say only that the employee must contact the internal Help Desk through an approved corporate channel. Use an approved internal directory or corporate support channel rather than inventing a number.",
+        "context_relevance": {
+          "SEC-17::standard-recovery-workflow": 3
+        },
+        "required_concepts": [
+          [
+            "(?:do not|does not|don't).*provide.*(?:phone|number)",
+            "no.*phone number"
+          ],
+          [
+            "approved corporate channel"
+          ]
+        ],
+        "required_context_ids": [
+          "SEC-17::standard-recovery-workflow"
+        ],
+        "expected_citation_ids": [
+          "SEC-17::standard-recovery-workflow"
+        ],
+        "forbidden_claim_patterns": [
+          "(?:call|phone|dial)\\s+\\+?[0-9][0-9 ()-]{5,}"
+        ]
+      },
+      "example_metadata": {
+        "tags": [
+          "insufficient-evidence",
+          "contact-detail",
+          "hallucination"
+        ],
+        "source": "evaluation/data/golden_cases.json",
+        "case_id": "MFA-007",
+        "dataset_split": [
+          "teaching",
+          "payroll-mfa-golden-v1"
+        ],
+        "dataset_version": "payroll-mfa-golden-v1"
+      },
+      "run": {
+        "id": "019fea5b-f76e-7ba3-883b-cd846022df5c",
+        "name": "Target",
+        "status": "success",
+        "error": null,
+        "start_time": "2026-08-10T06:28:43.502098+00:00",
+        "end_time": "2026-08-10T06:28:45.047252+00:00"
+      },
+      "feedback": {
+        "required_context_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "All required contexts were retrieved.",
+          "correction": null,
+          "extra": null
+        },
+        "required_concept_coverage": {
+          "score": 0.5,
+          "value": null,
+          "comment": "Matched 1 of 2 required concept groups.",
+          "correction": null,
+          "extra": null
+        },
+        "forbidden_claim_pass": {
+          "score": 1.0,
+          "value": null,
+          "comment": "No forbidden claim pattern matched.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_validity": {
+          "score": 0.0,
+          "value": null,
+          "comment": "No inline chunk-ID citations were present.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_recall": {
+          "score": 0.0,
+          "value": null,
+          "comment": "Expected citations found: 0/1",
+          "correction": null,
+          "extra": null
+        },
+        "exact_reference_match": {
+          "score": false,
+          "value": null,
+          "comment": "Exact match failed; this does not by itself prove semantic incorrectness.",
+          "correction": null,
+          "extra": null
+        }
+      }
+    },
+    {
+      "case_id": "MFA-005",
+      "inputs": {
+        "case_id": "MFA-005",
+        "question": "My phone was stolen and I received an unexpected MFA prompt. What must happen?"
+      },
+      "actual_outputs": {
+        "case_id": "MFA-005",
+        "answer": "When you receive an unexpected MFA prompt due to your stolen phone, the following must happen:\n\n1. The Help Desk will verify your identity as soon as you contact them.\n2. After verification, they must revoke the old authenticator registration and record the loss.\n3. It's mandatory to escalate the case to Security Operations if there are reports of an unexpected MFA prompt or suspicious activity [SEC-17::lost-or-stolen-devices].\n4. Then, device re-enrolment will begin, which includes issuing a single-use enrolment link to your corporate account [SEC-17::device-re-enrolment].\n\nMake sure to report the issue through an approved corporate channel [SEC-17::standard-recovery-workflow].",
+        "retrieved_chunk_ids": [
+          "SEC-17::lost-or-stolen-devices",
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::device-re-enrolment",
+          "SEC-17::identity-verification",
+          "SEC-17::prohibited-shortcuts"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::lost-or-stolen-devices]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Lost or stolen devices\nWhen a device is reported lost or stolen, the old authenticator registration must be revoked as soon as identity is verified. The Help Desk records the loss in the ticket and advises the employee to report suspected device compromise to Security Operations. Security escalation is mandatory if the employee reports an unexpected MFA prompt, a suspicious sign-in, or possible disclosure of a recovery code.",
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[SEC-17::device-re-enrolment]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Device re-enrolment\nAfter successful verification, the Help Desk revokes the old authenticator registration and issues a single-use enrolment link to the employee's corporate account. The link expires after 30 minutes and must not be forwarded. The employee registers the new device and completes a test sign-in. Recovery is complete only after the test sign-in succeeds.",
+          "[SEC-17::identity-verification]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Identity verification\nBefore changing MFA, the Help Desk must verify the employee identifier and two approved factors from the identity record. Approved factors may include a callback to a registered corporate number, confirmation through the signed-in corporate device, or an in-person identity check. The technician must never request the employee's password, one-time passcode, full national identity number, or personal banking PIN.",
+          "[SEC-17::prohibited-shortcuts]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Prohibited shortcuts\nA manager's approval is not a substitute for employee identity verification. Technicians and managers must not disable MFA, issue a shared recovery code, accept an OTP sent by the employee, redirect enrolment to a personal email address, or promise access before the test sign-in succeeds. Urgency does not remove these controls."
+        ],
+        "retrieval_scores": [
+          0.636027,
+          0.548076,
+          0.540841,
+          0.53791,
+          0.525867
+        ],
+        "provider": "openai",
+        "embedding_model": "text-embedding-3-small",
+        "generation_model": "gpt-4o-mini",
+        "retrieval_latency_ms": 257,
+        "generation_latency_ms": 2814,
+        "total_latency_ms": 3071,
+        "canonical_trace_id": "rag-20260810T062845-9448b775",
+        "canonical_trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260810T062845-9448b775.json",
+        "langsmith_rag_run_id": "019fea5b-f41e-7b02-981a-06fb5ad26cbf"
+      },
+      "reference_outputs": {
+        "answer": "After identity is verified, revoke the stolen device's authenticator registration as soon as possible and record the loss in the ticket. Advise the employee to report suspected compromise to Security Operations. Because an unexpected MFA prompt was reported, Security escalation is mandatory and the case also receives the Security Review classification.",
+        "context_relevance": {
+          "OPS-09::triage-categories": 2,
+          "SEC-17::lost-or-stolen-devices": 3
+        },
+        "required_concepts": [
+          [
+            "revok(?:e|es).*authenticator"
+          ],
+          [
+            "record.*loss.*ticket"
+          ],
+          [
+            "Security Operations"
+          ],
+          [
+            "Security escalation.*mandatory",
+            "mandatory.*Security escalation"
+          ],
+          [
+            "Security Review"
+          ]
+        ],
+        "required_context_ids": [
+          "SEC-17::lost-or-stolen-devices",
+          "OPS-09::triage-categories"
+        ],
+        "expected_citation_ids": [
+          "SEC-17::lost-or-stolen-devices",
+          "OPS-09::triage-categories"
+        ],
+        "forbidden_claim_patterns": []
+      },
+      "example_metadata": {
+        "tags": [
+          "security",
+          "stolen-device",
+          "escalation"
+        ],
+        "source": "evaluation/data/golden_cases.json",
+        "case_id": "MFA-005",
+        "dataset_split": [
+          "teaching",
+          "payroll-mfa-golden-v1"
+        ],
+        "dataset_version": "payroll-mfa-golden-v1"
+      },
+      "run": {
+        "id": "019fea5b-f41d-7391-81a0-b9a6747ea957",
+        "name": "Target",
+        "status": "success",
+        "error": null,
+        "start_time": "2026-08-10T06:28:42.653973+00:00",
+        "end_time": "2026-08-10T06:28:45.733996+00:00"
+      },
+      "feedback": {
+        "required_context_recall": {
+          "score": 0.5,
+          "value": null,
+          "comment": "Missing required contexts: OPS-09::triage-categories",
+          "correction": null,
+          "extra": null
+        },
+        "required_concept_coverage": {
+          "score": 0.4,
+          "value": null,
+          "comment": "Matched 2 of 5 required concept groups.",
+          "correction": null,
+          "extra": null
+        },
+        "forbidden_claim_pass": {
+          "score": 1.0,
+          "value": null,
+          "comment": "No forbidden claim pattern matched.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_validity": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Every citation names a retrieved chunk.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_recall": {
+          "score": 0.5,
+          "value": null,
+          "comment": "Expected citations found: 1/2",
+          "correction": null,
+          "extra": null
+        },
+        "exact_reference_match": {
+          "score": false,
+          "value": null,
+          "comment": "Exact match failed; this does not by itself prove semantic incorrectness.",
+          "correction": null,
+          "extra": null
+        }
+      }
+    },
+    {
+      "case_id": "MFA-003",
+      "inputs": {
+        "case_id": "MFA-003",
+        "question": "I cannot complete MFA and payroll closes in three hours. How should the case be handled?"
+      },
+      "actual_outputs": {
+        "case_id": "MFA-003",
+        "answer": "To handle the situation where you cannot complete MFA and your payroll deadline is within three hours, create an urgent Payroll Support ticket following the policy outlined in [SEC-17::payroll-deadline-fallback]. This will allow Payroll Support to help you submit the required payroll change through an approved assisted process after independently verifying your request. \n\nMake sure to communicate to the employee that the enrolment link for MFA recovery expires after 30 minutes, and clarify which recovery stage is progressing and what steps they need to take next [OPS-09::employee-communication].",
+        "retrieved_chunk_ids": [
+          "SEC-17::payroll-deadline-fallback",
+          "OPS-09::closure-evidence",
+          "OPS-09::triage-categories",
+          "OPS-09::employee-communication",
+          "OPS-09::escalation-rules"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access.",
+          "[OPS-09::closure-evidence]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Closure evidence\nClose the MFA recovery only after recording the old registration as revoked, the new device as enrolled, and the test sign-in as successful. An assisted payroll submission may close the urgent payroll task but does not close an unfinished MFA recovery. Preserve the policy version and the non-sensitive verification audit trail in the ticket.",
+          "[OPS-09::triage-categories]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Triage categories\nClassify an MFA request as `P2 Payroll Blocking` when the employee cannot access payroll and has a submission deadline within four hours. Classify it as `P3 Access Recovery` when payroll is unavailable but no four-hour deadline exists. Use `Security Review` in addition to the access category when the device is stolen, an unexpected MFA prompt occurred, or compromise is suspected.",
+          "[OPS-09::employee-communication]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Employee communication\nTell the employee which recovery stage is in progress, what action they must take next, and that the enrolment link expires after 30 minutes. If an escalation is required, provide the ticket identifier and the responsible queue. Do not promise a restoration time. State that the 30-minute figure is an initial-response target during staffed hours, not an access-restoration guarantee.",
+          "[OPS-09::escalation-rules]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Escalation rules\nEscalate failed identity verification to the Identity Assurance queue. Escalate a payroll deadline within four hours to Payroll Support after creating the recovery ticket. Escalate suspicious prompts, stolen devices with compromise indicators, or exposed recovery codes to Security Operations. A payroll escalation may enable an assisted payroll submission, but it must not be described as temporary portal access."
+        ],
+        "retrieval_scores": [
+          0.633385,
+          0.62103,
+          0.602066,
+          0.568974,
+          0.556545
+        ],
+        "provider": "openai",
+        "embedding_model": "text-embedding-3-small",
+        "generation_model": "gpt-4o-mini",
+        "retrieval_latency_ms": 251,
+        "generation_latency_ms": 2162,
+        "total_latency_ms": 2413,
+        "canonical_trace_id": "rag-20260810T062848-8a6b8910",
+        "canonical_trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260810T062848-8a6b8910.json",
+        "langsmith_rag_run_id": "019fea5c-0026-7920-b9ae-0c17d0fdc124"
+      },
+      "reference_outputs": {
+        "answer": "Classify the incident as P2 Payroll Blocking because the deadline is within four hours. The Help Desk must create the recovery ticket and escalate to Payroll Support. If device re-enrolment cannot be completed, Payroll Support may use the approved assisted-submission process after independently verifying the request. The fallback neither disables MFA nor restores payroll portal access.",
+        "context_relevance": {
+          "OPS-09::triage-categories": 3,
+          "SEC-17::payroll-deadline-fallback": 3
+        },
+        "required_concepts": [
+          [
+            "P2 Payroll Blocking"
+          ],
+          [
+            "within (?:four|4) hours"
+          ],
+          [
+            "Payroll Support"
+          ],
+          [
+            "assisted.*(?:submission|process)"
+          ],
+          [
+            "(?:does not|not|neither).*restore.*portal access"
+          ]
+        ],
+        "required_context_ids": [
+          "OPS-09::triage-categories",
+          "SEC-17::payroll-deadline-fallback"
+        ],
+        "expected_citation_ids": [
+          "OPS-09::triage-categories",
+          "SEC-17::payroll-deadline-fallback"
+        ],
+        "forbidden_claim_patterns": [
+          "fallback (?:restores|grants|provides) (?:temporary )?portal access"
+        ]
+      },
+      "example_metadata": {
+        "tags": [
+          "deadline",
+          "triage",
+          "conditional-fallback"
+        ],
+        "source": "evaluation/data/golden_cases.json",
+        "case_id": "MFA-003",
+        "dataset_split": [
+          "teaching",
+          "payroll-mfa-golden-v1"
+        ],
+        "dataset_version": "payroll-mfa-golden-v1"
+      },
+      "run": {
+        "id": "019fea5c-0025-70e0-8470-77262af2934a",
+        "name": "Target",
+        "status": "success",
+        "error": null,
+        "start_time": "2026-08-10T06:28:45.733996+00:00",
+        "end_time": "2026-08-10T06:28:48.153267+00:00"
+      },
+      "feedback": {
+        "required_context_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "All required contexts were retrieved.",
+          "correction": null,
+          "extra": null
+        },
+        "required_concept_coverage": {
+          "score": 0.4,
+          "value": null,
+          "comment": "Matched 2 of 5 required concept groups.",
+          "correction": null,
+          "extra": null
+        },
+        "forbidden_claim_pass": {
+          "score": 1.0,
+          "value": null,
+          "comment": "No forbidden claim pattern matched.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_validity": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Every citation names a retrieved chunk.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_recall": {
+          "score": 0.5,
+          "value": null,
+          "comment": "Expected citations found: 1/2",
+          "correction": null,
+          "extra": null
+        },
+        "exact_reference_match": {
+          "score": false,
+          "value": null,
+          "comment": "Exact match failed; this does not by itself prove semantic incorrectness.",
+          "correction": null,
+          "extra": null
+        }
+      }
+    },
+    {
+      "case_id": "MFA-002",
+      "inputs": {
+        "case_id": "MFA-002",
+        "question": "Can my manager approve a temporary MFA bypass because payroll closes today?"
+      },
+      "actual_outputs": {
+        "case_id": "MFA-002",
+        "answer": "No, your manager cannot approve a temporary MFA bypass because payroll deadlines do not exempt the requirement for identity verification. The policy clearly states that a manager's approval is not a substitute for employee identity verification, and urgency does not remove these controls [SEC-17::prohibited-shortcuts]. Instead, if there is a payroll submission deadline within four hours, the Help Desk will create an urgent Payroll Support ticket to assist the employee while still adhering to the MFA protocols [SEC-17::payroll-deadline-fallback].",
+        "retrieved_chunk_ids": [
+          "SEC-17::payroll-deadline-fallback",
+          "SEC-17::prohibited-shortcuts",
+          "OPS-09::triage-categories",
+          "OPS-09::closure-evidence",
+          "OPS-09::support-boundaries"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::payroll-deadline-fallback]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Payroll deadline fallback\nIf the employee has a payroll submission deadline within four hours and device re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may help the employee submit the required payroll change through an approved assisted process after independently verifying the request. This fallback does not disable or bypass MFA and does not restore portal access.",
+          "[SEC-17::prohibited-shortcuts]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Prohibited shortcuts\nA manager's approval is not a substitute for employee identity verification. Technicians and managers must not disable MFA, issue a shared recovery code, accept an OTP sent by the employee, redirect enrolment to a personal email address, or promise access before the test sign-in succeeds. Urgency does not remove these controls.",
+          "[OPS-09::triage-categories]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Triage categories\nClassify an MFA request as `P2 Payroll Blocking` when the employee cannot access payroll and has a submission deadline within four hours. Classify it as `P3 Access Recovery` when payroll is unavailable but no four-hour deadline exists. Use `Security Review` in addition to the access category when the device is stolen, an unexpected MFA prompt occurred, or compromise is suspected.",
+          "[OPS-09::closure-evidence]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Closure evidence\nClose the MFA recovery only after recording the old registration as revoked, the new device as enrolled, and the test sign-in as successful. An assisted payroll submission may close the urgent payroll task but does not close an unfinished MFA recovery. Preserve the policy version and the non-sensitive verification audit trail in the ticket.",
+          "[OPS-09::support-boundaries]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Support boundaries\nThe Help Desk owns identity verification, authenticator revocation, re-enrolment, and the recovery ticket. Payroll Support owns the approved assisted-submission process. Security Operations owns compromise investigation. A manager may confirm business urgency but cannot perform or waive identity verification."
+        ],
+        "retrieval_scores": [
+          0.651796,
+          0.625694,
+          0.59888,
+          0.592025,
+          0.564957
+        ],
+        "provider": "openai",
+        "embedding_model": "text-embedding-3-small",
+        "generation_model": "gpt-4o-mini",
+        "retrieval_latency_ms": 264,
+        "generation_latency_ms": 1956,
+        "total_latency_ms": 2220,
+        "canonical_trace_id": "rag-20260810T062850-e3c96591",
+        "canonical_trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260810T062850-e3c96591.json",
+        "langsmith_rag_run_id": "019fea5c-099a-79f1-9def-669e5d804b0a"
+      },
+      "reference_outputs": {
+        "answer": "No. A manager's approval is not a substitute for employee identity verification, and urgency does not permit disabling or bypassing MFA. If the payroll deadline is within four hours and re-enrolment cannot be completed, the Help Desk creates an urgent Payroll Support ticket. Payroll Support may assist with the payroll submission only after independently verifying the request; this does not restore portal access or bypass MFA.",
+        "context_relevance": {
+          "SEC-17::prohibited-shortcuts": 3,
+          "SEC-17::payroll-deadline-fallback": 3
+        },
+        "required_concepts": [
+          [
+            "manager.*not.*substitute",
+            "manager.*cannot",
+            "manager.*can't"
+          ],
+          [
+            "(?:must not|does not|cannot|can't).*bypass MFA",
+            "no.*MFA bypass"
+          ],
+          [
+            "urgent Payroll Support ticket"
+          ],
+          [
+            "assisted.*process",
+            "assist.*payroll submission"
+          ],
+          [
+            "does not restore portal access",
+            "not.*portal access"
+          ]
+        ],
+        "required_context_ids": [
+          "SEC-17::prohibited-shortcuts",
+          "SEC-17::payroll-deadline-fallback"
+        ],
+        "expected_citation_ids": [
+          "SEC-17::prohibited-shortcuts",
+          "SEC-17::payroll-deadline-fallback"
+        ],
+        "forbidden_claim_patterns": [
+          "manager (?:can|may) approve (?:a )?(?:temporary )?MFA bypass",
+          "manager approval (?:allows|permits|authorizes)"
+        ]
+      },
+      "example_metadata": {
+        "tags": [
+          "safety",
+          "conditional-fallback",
+          "negative-case"
+        ],
+        "source": "evaluation/data/golden_cases.json",
+        "case_id": "MFA-002",
+        "dataset_split": [
+          "teaching",
+          "payroll-mfa-golden-v1"
+        ],
+        "dataset_version": "payroll-mfa-golden-v1"
+      },
+      "run": {
+        "id": "019fea5c-0999-7731-9b9e-0b84bb3bff0d",
+        "name": "Target",
+        "status": "success",
+        "error": null,
+        "start_time": "2026-08-10T06:28:48.153267+00:00",
+        "end_time": "2026-08-10T06:28:50.380622+00:00"
+      },
+      "feedback": {
+        "required_context_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "All required contexts were retrieved.",
+          "correction": null,
+          "extra": null
+        },
+        "required_concept_coverage": {
+          "score": 0.6,
+          "value": null,
+          "comment": "Matched 3 of 5 required concept groups.",
+          "correction": null,
+          "extra": null
+        },
+        "forbidden_claim_pass": {
+          "score": 1.0,
+          "value": null,
+          "comment": "No forbidden claim pattern matched.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_validity": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Every citation names a retrieved chunk.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Expected citations found: 2/2",
+          "correction": null,
+          "extra": null
+        },
+        "exact_reference_match": {
+          "score": false,
+          "value": null,
+          "comment": "Exact match failed; this does not by itself prove semantic incorrectness.",
+          "correction": null,
+          "extra": null
+        }
+      }
+    },
+    {
+      "case_id": "MFA-001",
+      "inputs": {
+        "case_id": "MFA-001",
+        "question": "I changed phones and cannot complete MFA. How do I regain payroll access?"
+      },
+      "actual_outputs": {
+        "case_id": "MFA-001",
+        "answer": "To regain payroll access after changing your phone and being unable to complete MFA, you must contact the internal Help Desk through an approved corporate channel. The Help Desk will first verify your identity, revoke the old authenticator, and start the device re-enrolment process. You will then receive a single-use enrolment link to register your new device, which will expire after 30 minutes and must not be forwarded. After registering the new device, you need to complete a test sign-in, which finalizes the recovery only if it succeeds [SEC-17::standard-recovery-workflow], [SEC-17::device-re-enrolment].",
+        "retrieved_chunk_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::device-re-enrolment",
+          "SEC-17::identity-verification",
+          "SEC-17::purpose-and-scope",
+          "SEC-17::lost-or-stolen-devices"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[SEC-17::device-re-enrolment]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Device re-enrolment\nAfter successful verification, the Help Desk revokes the old authenticator registration and issues a single-use enrolment link to the employee's corporate account. The link expires after 30 minutes and must not be forwarded. The employee registers the new device and completes a test sign-in. Recovery is complete only after the test sign-in succeeds.",
+          "[SEC-17::identity-verification]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Identity verification\nBefore changing MFA, the Help Desk must verify the employee identifier and two approved factors from the identity record. Approved factors may include a callback to a registered corporate number, confirmation through the signed-in corporate device, or an in-person identity check. The technician must never request the employee's password, one-time passcode, full national identity number, or personal banking PIN.",
+          "[SEC-17::purpose-and-scope]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Purpose and scope\nThis policy applies when an employee cannot complete multi-factor authentication (MFA) for the employee payroll portal. It covers a replaced, lost, stolen, damaged, or reset authenticator device. A payroll password reset and an MFA recovery are separate operations; completing one does not automatically complete the other.",
+          "[SEC-17::lost-or-stolen-devices]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Lost or stolen devices\nWhen a device is reported lost or stolen, the old authenticator registration must be revoked as soon as identity is verified. The Help Desk records the loss in the ticket and advises the employee to report suspected device compromise to Security Operations. Security escalation is mandatory if the employee reports an unexpected MFA prompt, a suspicious sign-in, or possible disclosure of a recovery code."
+        ],
+        "retrieval_scores": [
+          0.729843,
+          0.708509,
+          0.69222,
+          0.690787,
+          0.677443
+        ],
+        "provider": "openai",
+        "embedding_model": "text-embedding-3-small",
+        "generation_model": "gpt-4o-mini",
+        "retrieval_latency_ms": 265,
+        "generation_latency_ms": 2610,
+        "total_latency_ms": 2875,
+        "canonical_trace_id": "rag-20260810T062853-54bf7e18",
+        "canonical_trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260810T062853-54bf7e18.json",
+        "langsmith_rag_run_id": "019fea5c-124d-7241-aff5-a600733569b0"
+      },
+      "reference_outputs": {
+        "answer": "Contact the internal Help Desk through an approved corporate channel. After identity verification succeeds, the Help Desk revokes the unavailable authenticator and starts device re-enrolment. A single-use enrolment link is sent to the corporate account and expires after 30 minutes. Register the new device and complete a successful test sign-in; recovery is complete only after that test succeeds. If required verification fails, recovery must stop and be escalated.",
+        "context_relevance": {
+          "SEC-17::device-re-enrolment": 3,
+          "SEC-17::standard-recovery-workflow": 3
+        },
+        "required_concepts": [
+          [
+            "Help Desk"
+          ],
+          [
+            "verif(?:y|ication).*identity",
+            "identity verification"
+          ],
+          [
+            "revok(?:e|es|ed).*authenticator"
+          ],
+          [
+            "re-enrol",
+            "reenrol",
+            "re-enroll",
+            "reenroll"
+          ],
+          [
+            "test sign-in.*success",
+            "successful test sign-in"
+          ]
+        ],
+        "required_context_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::device-re-enrolment"
+        ],
+        "expected_citation_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::device-re-enrolment"
+        ],
+        "forbidden_claim_patterns": [
+          "(?:manager|employee) (?:can|may) (?:temporarily )?disable MFA"
+        ]
+      },
+      "example_metadata": {
+        "tags": [
+          "recovery",
+          "happy-path",
+          "completeness"
+        ],
+        "source": "evaluation/data/golden_cases.json",
+        "case_id": "MFA-001",
+        "dataset_split": [
+          "teaching",
+          "payroll-mfa-golden-v1"
+        ],
+        "dataset_version": "payroll-mfa-golden-v1"
+      },
+      "run": {
+        "id": "019fea5c-124c-7462-9946-ea9bc8a683cf",
+        "name": "Target",
+        "status": "success",
+        "error": null,
+        "start_time": "2026-08-10T06:28:50.380622+00:00",
+        "end_time": "2026-08-10T06:28:53.262183+00:00"
+      },
+      "feedback": {
+        "required_context_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "All required contexts were retrieved.",
+          "correction": null,
+          "extra": null
+        },
+        "required_concept_coverage": {
+          "score": 0.8,
+          "value": null,
+          "comment": "Matched 4 of 5 required concept groups.",
+          "correction": null,
+          "extra": null
+        },
+        "forbidden_claim_pass": {
+          "score": 1.0,
+          "value": null,
+          "comment": "No forbidden claim pattern matched.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_validity": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Every citation names a retrieved chunk.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Expected citations found: 2/2",
+          "correction": null,
+          "extra": null
+        },
+        "exact_reference_match": {
+          "score": false,
+          "value": null,
+          "comment": "Exact match failed; this does not by itself prove semantic incorrectness.",
+          "correction": null,
+          "extra": null
+        }
+      }
+    },
+    {
+      "case_id": "MFA-004",
+      "inputs": {
+        "case_id": "MFA-004",
+        "question": "What information must the Help Desk record in an MFA recovery ticket?"
+      },
+      "actual_outputs": {
+        "case_id": "MFA-004",
+        "answer": "The Help Desk must record the following information in an MFA recovery ticket:\n\n1. Employee identifier\n2. Corporate contact channel\n3. Affected payroll function\n4. Deadline, if any\n5. Device-loss status\n6. Verification methods attempted\n7. Verification outcome\n8. Old-authenticator revocation status\n9. Re-enrolment outcome\n10. Retrieved policy version\n11. Every escalation made\n\nAdditionally, they must not include passwords, OTP values, full identity numbers, banking PINs, or recovery secrets in the ticket [OPS-09::required-ticket-fields].",
+        "retrieved_chunk_ids": [
+          "OPS-09::required-ticket-fields",
+          "SEC-17::lost-or-stolen-devices",
+          "SEC-17::identity-verification",
+          "SEC-17::standard-recovery-workflow",
+          "OPS-09::technician-procedure"
+        ],
+        "retrieved_contexts": [
+          "[OPS-09::required-ticket-fields]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Required ticket fields\nRecord the employee identifier, corporate contact channel, affected payroll function, deadline if any, device-loss status, verification methods attempted, verification outcome, old-authenticator revocation status, re-enrolment outcome, retrieved policy version, and every escalation made. Do not copy passwords, OTP values, full identity numbers, banking PINs, or recovery secrets into the ticket.",
+          "[SEC-17::lost-or-stolen-devices]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Lost or stolen devices\nWhen a device is reported lost or stolen, the old authenticator registration must be revoked as soon as identity is verified. The Help Desk records the loss in the ticket and advises the employee to report suspected device compromise to Security Operations. Security escalation is mandatory if the employee reports an unexpected MFA prompt, a suspicious sign-in, or possible disclosure of a recovery code.",
+          "[SEC-17::identity-verification]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Identity verification\nBefore changing MFA, the Help Desk must verify the employee identifier and two approved factors from the identity record. Approved factors may include a callback to a registered corporate number, confirmation through the signed-in corporate device, or an in-person identity check. The technician must never request the employee's password, one-time passcode, full national identity number, or personal banking PIN.",
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[OPS-09::technician-procedure]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Technician procedure\nOpen the recovery ticket before changing authentication state. Confirm the request through an approved corporate channel, perform the two-factor identity check defined by SEC-17, record only the verification method and outcome, revoke the old registration, send the single-use enrolment link to the corporate account, and observe or confirm a successful test sign-in. If a step fails, record the failure and follow the escalation rules instead of improvising a shortcut."
+        ],
+        "retrieval_scores": [
+          0.681144,
+          0.675562,
+          0.670181,
+          0.658497,
+          0.658177
+        ],
+        "provider": "openai",
+        "embedding_model": "text-embedding-3-small",
+        "generation_model": "gpt-4o-mini",
+        "retrieval_latency_ms": 116714,
+        "generation_latency_ms": 2230,
+        "total_latency_ms": 118944,
+        "canonical_trace_id": "rag-20260810T063043-7a5456cb",
+        "canonical_trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260810T063043-7a5456cb.json",
+        "langsmith_rag_run_id": "019fea5b-fd78-7ac0-8914-af943722a284"
+      },
+      "reference_outputs": {
+        "answer": "Record the employee identifier, corporate contact channel, affected payroll function, deadline if any, device-loss status, verification methods attempted, verification outcome, old-authenticator revocation status, re-enrolment outcome, retrieved policy version, and every escalation. Do not record passwords, OTP values, full identity numbers, banking PINs, or recovery secrets.",
+        "context_relevance": {
+          "OPS-09::required-ticket-fields": 3
+        },
+        "required_concepts": [
+          [
+            "employee identifier"
+          ],
+          [
+            "corporate contact channel"
+          ],
+          [
+            "affected payroll function"
+          ],
+          [
+            "deadline"
+          ],
+          [
+            "device-loss status",
+            "device loss status"
+          ],
+          [
+            "verification methods"
+          ],
+          [
+            "verification outcome"
+          ],
+          [
+            "revocation status"
+          ],
+          [
+            "re-enrolment outcome",
+            "reenrolment outcome",
+            "re-enrollment outcome"
+          ],
+          [
+            "policy version"
+          ],
+          [
+            "every escalation",
+            "escalations"
+          ],
+          [
+            "do not.*(?:password|OTP|banking PIN|recovery secret)"
+          ]
+        ],
+        "required_context_ids": [
+          "OPS-09::required-ticket-fields"
+        ],
+        "expected_citation_ids": [
+          "OPS-09::required-ticket-fields"
+        ],
+        "forbidden_claim_patterns": []
+      },
+      "example_metadata": {
+        "tags": [
+          "ticket",
+          "field-completeness",
+          "data-minimization"
+        ],
+        "source": "evaluation/data/golden_cases.json",
+        "case_id": "MFA-004",
+        "dataset_split": [
+          "teaching",
+          "payroll-mfa-golden-v1"
+        ],
+        "dataset_version": "payroll-mfa-golden-v1"
+      },
+      "run": {
+        "id": "019fea5b-fd77-7c20-b2a1-5e8c21c77b59",
+        "name": "Target",
+        "status": "success",
+        "error": null,
+        "start_time": "2026-08-10T06:28:45.047252+00:00",
+        "end_time": "2026-08-10T06:30:43.997295+00:00"
+      },
+      "feedback": {
+        "required_context_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "All required contexts were retrieved.",
+          "correction": null,
+          "extra": null
+        },
+        "required_concept_coverage": {
+          "score": 0.9166666666666666,
+          "value": null,
+          "comment": "Matched 11 of 12 required concept groups.",
+          "correction": null,
+          "extra": null
+        },
+        "forbidden_claim_pass": {
+          "score": 1.0,
+          "value": null,
+          "comment": "No forbidden claim pattern matched.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_validity": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Every citation names a retrieved chunk.",
+          "correction": null,
+          "extra": null
+        },
+        "citation_recall": {
+          "score": 1.0,
+          "value": null,
+          "comment": "Expected citations found: 1/1",
+          "correction": null,
+          "extra": null
+        },
+        "exact_reference_match": {
+          "score": false,
+          "value": null,
+          "comment": "Exact match failed; this does not by itself prove semantic incorrectness.",
+          "correction": null,
+          "extra": null
+        }
+      }
+    }
+  ]
+}
