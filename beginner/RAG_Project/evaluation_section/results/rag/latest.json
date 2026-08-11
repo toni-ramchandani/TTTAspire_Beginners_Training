@@ -1,0 +1,522 @@
+{
+  "schema_version": "evaluation-section-1.0",
+  "experiment_id": "seed-eval-20260811T054734-67412c1a",
+  "created_at_utc": "2026-08-11T05:47:34.628374+00:00",
+  "dataset_validation": {
+    "valid": true,
+    "dataset_version": "payroll-mfa-eval-seed-v1.0.0",
+    "row_count": 30,
+    "errors": [],
+    "warnings": [],
+    "source_counts": {
+      "existing_golden": 8,
+      "source_grounded_synthetic": 22
+    },
+    "review_status_counts": {
+      "approved_existing": 8,
+      "candidate_requires_human_review": 22
+    },
+    "scenario_counts": {
+      "adversarial": 8,
+      "edge": 12,
+      "normal": 10
+    },
+    "business_critical_count": 18,
+    "risk_area_counts": {
+      "access_control": 1,
+      "accountability": 1,
+      "auditability": 2,
+      "authorization_boundary": 2,
+      "boundary_condition": 2,
+      "closure": 1,
+      "communication": 1,
+      "completeness": 3,
+      "compromise": 2,
+      "credential_exposure": 1,
+      "data_exposure": 1,
+      "data_handling": 1,
+      "data_minimization": 2,
+      "deadline": 2,
+      "failed_verification": 1,
+      "hallucination": 2,
+      "identity_verification": 2,
+      "insufficient_evidence": 2,
+      "ownership": 1,
+      "pii": 1,
+      "policy_override": 3,
+      "premature_closure": 1,
+      "premature_completion": 1,
+      "recordkeeping": 1,
+      "recovery": 2,
+      "routing": 1,
+      "secret_disclosure": 1,
+      "secure_enrolment": 1,
+      "security_escalation": 3,
+      "sequence_control": 1,
+      "shared_secret": 1,
+      "triage": 4,
+      "uncertainty": 2,
+      "unsafe_bypass": 2,
+      "unsafe_continuation": 1,
+      "unsupported_guarantee": 1,
+      "workflow_state": 3
+    },
+    "near_duplicate_pairs": [],
+    "possible_raw_pii": [],
+    "bounded_claim": "Thirty rows form a teaching seed dataset. They do not establish production coverage or a mature golden dataset."
+  },
+  "selected_case_count": 2,
+  "requested_top_k": 3,
+  "metric_profile": "core",
+  "ragas_enabled": true,
+  "judge": {
+    "provider": "ollama",
+    "chat_model": "gemma3:4b",
+    "embedding_model": "embeddinggemma"
+  },
+  "dependency_versions": {
+    "ragas": "0.4.3",
+    "openai": "2.52.0",
+    "instructor": "1.15.4",
+    "langchain": "1.3.14",
+    "langchain-core": "1.5.3",
+    "langchain-community": "0.3.31",
+    "python-dotenv": "1.2.2",
+    "numpy": "2.5.1"
+  },
+  "cases": [
+    {
+      "case_id": "SEED-010",
+      "tags": [
+        "damaged-device",
+        "recovery"
+      ],
+      "question": "My authenticator phone is damaged. What is the normal recovery path?",
+      "reference": "Contact the internal Help Desk through an approved corporate channel. After identity verification, the Help Desk revokes the unavailable authenticator, starts re-enrolment, and completes recovery only after a successful test sign-in.",
+      "required_context_ids": [
+        "SEC-17::purpose-and-scope",
+        "SEC-17::standard-recovery-workflow"
+      ],
+      "context_relevance": {
+        "SEC-17::purpose-and-scope": 3,
+        "SEC-17::standard-recovery-workflow": 3
+      },
+      "expected_citation_ids": [
+        "SEC-17::purpose-and-scope",
+        "SEC-17::standard-recovery-workflow"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260811T054643-083359ff.json",
+        "run_id": "rag-20260811T054643-083359ff",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma3:4b",
+        "top_k": 3,
+        "question": "My authenticator phone is damaged. What is the normal recovery path?",
+        "answer": "To recover your authenticator after it’s damaged, you must contact the internal Help Desk through an approved corporate channel [SEC-17::standard-recovery-workflow]. The Help Desk will verify your identity, revoke your unavailable authenticator, and then guide you through device re-enrolment [SEC-17::standard-recovery-workflow]. You must complete the new enrolment before normal payroll access is restored [SEC-17::standard-recovery-workflow].",
+        "retrieved_chunk_ids": [
+          "SEC-17::standard-recovery-workflow",
+          "SEC-17::lost-or-stolen-devices",
+          "SEC-17::purpose-and-scope"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[SEC-17::lost-or-stolen-devices]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Lost or stolen devices\nWhen a device is reported lost or stolen, the old authenticator registration must be revoked as soon as identity is verified. The Help Desk records the loss in the ticket and advises the employee to report suspected device compromise to Security Operations. Security escalation is mandatory if the employee reports an unexpected MFA prompt, a suspicious sign-in, or possible disclosure of a recovery code.",
+          "[SEC-17::purpose-and-scope]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Purpose and scope\nThis policy applies when an employee cannot complete multi-factor authentication (MFA) for the employee payroll portal. It covers a replaced, lost, stolen, damaged, or reset authenticator device. A payroll password reset and an MFA recovery are separate operations; completing one does not automatically complete the other."
+        ],
+        "retrieval_scores": [
+          0.540909,
+          0.511774,
+          0.493494
+        ],
+        "retrieval_latency_ms": 13238,
+        "generation_latency_ms": 8287,
+        "total_latency_ms": 21525
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 2,
+        "judged_relevant_count": 2,
+        "required_context_count": 2,
+        "required_context_hit_count": 2,
+        "precision_at_k": 0.6666666666666666,
+        "recall_at_k": 1.0,
+        "f1_at_k": 0.8,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 0.8333333333333333,
+        "ndcg_at_k": 0.9197207891481876,
+        "required_context_recall_at_k": 1.0,
+        "all_required_contexts_at_k": 1.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "SEC-17::standard-recovery-workflow"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [],
+        "missing_expected_citation_ids": [
+          "SEC-17::purpose-and-scope"
+        ],
+        "citation_count": 1,
+        "citation_validity": 1.0,
+        "citation_precision": 1.0,
+        "citation_recall": 0.5,
+        "citation_f1": 0.6666666666666666,
+        "required_concept_coverage": 0.6,
+        "concept_matches": [
+          {
+            "patterns": [
+              "Help Desk"
+            ],
+            "matched": true,
+            "match": "Help Desk"
+          },
+          {
+            "patterns": [
+              "identity verification"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "revok"
+            ],
+            "matched": true,
+            "match": "revok"
+          },
+          {
+            "patterns": [
+              "re-enrol"
+            ],
+            "matched": true,
+            "match": "re-enrol"
+          },
+          {
+            "patterns": [
+              "test sign-in"
+            ],
+            "matched": false,
+            "match": null
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "ragas_metrics": {
+        "faithfulness": {
+          "value": 1.0,
+          "reason": null,
+          "error": null,
+          "latency_ms": 4871
+        },
+        "answer_relevancy": {
+          "value": 0.0,
+          "reason": null,
+          "error": null,
+          "latency_ms": 3387
+        },
+        "factual_f1": {
+          "value": 0.91,
+          "reason": null,
+          "error": null,
+          "latency_ms": 8977
+        },
+        "context_precision": {
+          "value": 0.99999999995,
+          "reason": null,
+          "error": null,
+          "latency_ms": 3564
+        },
+        "context_recall": {
+          "value": 1.0,
+          "reason": null,
+          "error": null,
+          "latency_ms": 2724
+        }
+      },
+      "seed_metadata": {
+        "source_type": "source_grounded_synthetic",
+        "review_status": "candidate_requires_human_review",
+        "scenario_type": "normal",
+        "business_critical": false,
+        "risk_areas": [
+          "recovery",
+          "completeness"
+        ]
+      },
+      "diagnosis": {
+        "bounded_outcome": "diagnostic_issue_observed",
+        "business_critical": false,
+        "scenario_type": "normal",
+        "review_status": "candidate_requires_human_review",
+        "issues": [
+          {
+            "component": "retrieval",
+            "signal": "required evidence is present with additional judged-irrelevant chunks",
+            "action": "inspect ranking and context-budget use before increasing top-k",
+            "value": "reduce distracting context without sacrificing required evidence"
+          },
+          {
+            "component": "generation-completeness",
+            "signal": "one or more required answer concepts are missing",
+            "action": "inspect retrieved evidence first, then prompt assembly and answer behavior",
+            "value": "route the fix to the component supported by trace evidence"
+          },
+          {
+            "component": "generation-attribution",
+            "signal": "one or more expected evidence citations are missing",
+            "action": "inspect citation instructions and whether the expected chunks were retrieved",
+            "value": "retain auditable links between policy claims and source evidence"
+          }
+        ],
+        "ragas_observations": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.0,
+          "factual_f1": 0.91,
+          "context_precision": 0.99999999995,
+          "context_recall": 1.0
+        },
+        "ragas_metric_errors": {},
+        "latency_observation_ms": 21525,
+        "limitation": "This diagnosis follows configured evidence rules. It is not proof of overall correctness, safety, fairness, or production readiness."
+      }
+    },
+    {
+      "case_id": "SEED-009",
+      "tags": [
+        "password-reset",
+        "separate-operation"
+      ],
+      "question": "I reset my payroll password. Does that also finish MFA recovery?",
+      "reference": "No. Password reset and MFA recovery are separate operations. MFA recovery still requires identity verification, revocation of the unavailable authenticator, device re-enrolment, and a successful test sign-in.",
+      "required_context_ids": [
+        "SEC-17::purpose-and-scope",
+        "SEC-17::standard-recovery-workflow"
+      ],
+      "context_relevance": {
+        "SEC-17::purpose-and-scope": 3,
+        "SEC-17::standard-recovery-workflow": 3
+      },
+      "expected_citation_ids": [
+        "SEC-17::purpose-and-scope",
+        "SEC-17::standard-recovery-workflow"
+      ],
+      "trace": {
+        "trace_path": "C:\\Toni\\Work\\TTT\\aspire-llm-evaluation-beginner\\beginner\\RAG_Project\\results\\rag-20260811T054711-37e9cc41.json",
+        "run_id": "rag-20260811T054711-37e9cc41",
+        "provider": "ollama",
+        "embedding_model": "embeddinggemma",
+        "generation_model": "gemma3:4b",
+        "top_k": 3,
+        "question": "I reset my payroll password. Does that also finish MFA recovery?",
+        "answer": "Completing a payroll password reset does not automatically finish MFA recovery [SEC-17::purpose-and-scope].",
+        "retrieved_chunk_ids": [
+          "SEC-17::purpose-and-scope",
+          "SEC-17::standard-recovery-workflow",
+          "OPS-09::closure-evidence"
+        ],
+        "retrieved_contexts": [
+          "[SEC-17::purpose-and-scope]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Purpose and scope\nThis policy applies when an employee cannot complete multi-factor authentication (MFA) for the employee payroll portal. It covers a replaced, lost, stolen, damaged, or reset authenticator device. A payroll password reset and an MFA recovery are separate operations; completing one does not automatically complete the other.",
+          "[SEC-17::standard-recovery-workflow]\nDocument: Payroll MFA Recovery Policy (version 2.1)\nSection: Standard recovery workflow\nThe employee must contact the internal Help Desk through an approved corporate channel. The Help Desk first verifies identity, then revokes the unavailable authenticator, and finally starts device re-enrolment. The employee must complete the new enrolment before normal payroll access is restored. If any required verification fails, the Help Desk must stop the recovery and escalate the case.",
+          "[OPS-09::closure-evidence]\nDocument: Payroll MFA Help-Desk Runbook (version 1.4)\nSection: Closure evidence\nClose the MFA recovery only after recording the old registration as revoked, the new device as enrolled, and the test sign-in as successful. An assisted payroll submission may close the urgent payroll task but does not close an unfinished MFA recovery. Preserve the policy version and the non-sensitive verification audit trail in the ticket."
+        ],
+        "retrieval_scores": [
+          0.715294,
+          0.697883,
+          0.690461
+        ],
+        "retrieval_latency_ms": 2127,
+        "generation_latency_ms": 2816,
+        "total_latency_ms": 4942
+      },
+      "retrieval_metrics": {
+        "k": 3,
+        "retrieved_relevant_count": 2,
+        "judged_relevant_count": 2,
+        "required_context_count": 2,
+        "required_context_hit_count": 2,
+        "precision_at_k": 0.6666666666666666,
+        "recall_at_k": 1.0,
+        "f1_at_k": 0.8,
+        "hit_at_k": 1.0,
+        "reciprocal_rank_at_k": 1.0,
+        "average_precision_at_k": 1.0,
+        "ndcg_at_k": 1.0,
+        "required_context_recall_at_k": 1.0,
+        "all_required_contexts_at_k": 1.0
+      },
+      "deterministic_metrics": {
+        "cited_ids": [
+          "SEC-17::purpose-and-scope"
+        ],
+        "invalid_cited_ids": [],
+        "unexpected_cited_ids": [],
+        "missing_expected_citation_ids": [
+          "SEC-17::standard-recovery-workflow"
+        ],
+        "citation_count": 1,
+        "citation_validity": 1.0,
+        "citation_precision": 1.0,
+        "citation_recall": 0.5,
+        "citation_f1": 0.6666666666666666,
+        "required_concept_coverage": 0.0,
+        "concept_matches": [
+          {
+            "patterns": [
+              "separate operations"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "identity verification"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "re-enrol"
+            ],
+            "matched": false,
+            "match": null
+          },
+          {
+            "patterns": [
+              "test sign-in"
+            ],
+            "matched": false,
+            "match": null
+          }
+        ],
+        "forbidden_claim_pass": 1.0,
+        "forbidden_claim_matches": []
+      },
+      "ragas_metrics": {
+        "faithfulness": {
+          "value": 1.0,
+          "reason": null,
+          "error": null,
+          "latency_ms": 2749
+        },
+        "answer_relevancy": {
+          "value": 0.0,
+          "reason": null,
+          "error": null,
+          "latency_ms": 6045
+        },
+        "factual_f1": {
+          "value": 0.29,
+          "reason": null,
+          "error": null,
+          "latency_ms": 8044
+        },
+        "context_precision": {
+          "value": 0.9999999999666667,
+          "reason": null,
+          "error": null,
+          "latency_ms": 3618
+        },
+        "context_recall": {
+          "value": 1.0,
+          "reason": null,
+          "error": null,
+          "latency_ms": 2603
+        }
+      },
+      "seed_metadata": {
+        "source_type": "source_grounded_synthetic",
+        "review_status": "candidate_requires_human_review",
+        "scenario_type": "normal",
+        "business_critical": false,
+        "risk_areas": [
+          "workflow_state",
+          "completeness"
+        ]
+      },
+      "diagnosis": {
+        "bounded_outcome": "diagnostic_issue_observed",
+        "business_critical": false,
+        "scenario_type": "normal",
+        "review_status": "candidate_requires_human_review",
+        "issues": [
+          {
+            "component": "retrieval",
+            "signal": "required evidence is present with additional judged-irrelevant chunks",
+            "action": "inspect ranking and context-budget use before increasing top-k",
+            "value": "reduce distracting context without sacrificing required evidence"
+          },
+          {
+            "component": "generation-completeness",
+            "signal": "one or more required answer concepts are missing",
+            "action": "inspect retrieved evidence first, then prompt assembly and answer behavior",
+            "value": "route the fix to the component supported by trace evidence"
+          },
+          {
+            "component": "generation-attribution",
+            "signal": "one or more expected evidence citations are missing",
+            "action": "inspect citation instructions and whether the expected chunks were retrieved",
+            "value": "retain auditable links between policy claims and source evidence"
+          }
+        ],
+        "ragas_observations": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.0,
+          "factual_f1": 0.29,
+          "context_precision": 0.9999999999666667,
+          "context_recall": 1.0
+        },
+        "ragas_metric_errors": {},
+        "latency_observation_ms": 4942,
+        "limitation": "This diagnosis follows configured evidence rules. It is not proof of overall correctness, safety, fairness, or production readiness."
+      }
+    }
+  ],
+  "summary": {
+    "case_count": 2,
+    "retrieval_macro": {
+      "precision_at_k": 0.6666666666666666,
+      "recall_at_k": 1.0,
+      "f1_at_k": 0.8,
+      "hit_at_k": 1.0,
+      "reciprocal_rank_at_k": 1.0,
+      "average_precision_at_k": 0.9166666666666666,
+      "ndcg_at_k": 0.9598603945740938,
+      "required_context_recall_at_k": 1.0,
+      "all_required_contexts_at_k": 1.0
+    },
+    "retrieval_micro": {
+      "precision_at_k": 0.6666666666666666,
+      "recall_at_k": 1.0
+    },
+    "deterministic_macro": {
+      "citation_validity": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 0.5,
+      "citation_f1": 0.6666666666666666,
+      "required_concept_coverage": 0.3,
+      "forbidden_claim_pass": 1.0
+    },
+    "ragas_macro": {
+      "answer_relevancy": 0.0,
+      "context_precision": 0.9999999999583333,
+      "context_recall": 1.0,
+      "factual_f1": 0.6,
+      "faithfulness": 1.0
+    },
+    "ragas_metric_attempts": 10,
+    "ragas_metric_errors": 0,
+    "ragas_error_rate": 0.0,
+    "aliases": {
+      "hit_rate_at_k": 1.0,
+      "mrr_at_k": 1.0,
+      "map_at_k": 0.9166666666666666,
+      "mean_ndcg_at_k": 0.9598603945740938
+    }
+  },
+  "blocking_policy_case_ids": [],
+  "interpretation_rule": "Per-case evidence and business-critical failures take precedence over aggregate means. No composite RAG quality score is calculated."
+}

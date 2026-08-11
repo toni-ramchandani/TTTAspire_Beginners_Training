@@ -1,0 +1,3 @@
+# Full verified environment: RAG + Ragas + DeepEval/Ollama + LangSmith.
+-r requirements-all-eval.txt
+

@@ -1,0 +1,17 @@
+{
+  "review_status": "replace_with_human_review_complete",
+  "human_disposition": "replace_with_confirmed_failure_or_new_coverage_candidate",
+  "dataset_disposition": "replace_with_add_candidate",
+  "component": "generation-policy",
+  "severity": "blocking",
+  "sanitized_question": "Replace with the reviewed and sanitized question.",
+  "reference": "Replace with expected behavior supported by the source policy.",
+  "required_context_ids": [],
+  "expected_citation_ids": [],
+  "required_concepts": [],
+  "forbidden_claim_patterns": [],
+  "risk_areas": [],
+  "provenance": [],
+  "notes": "Do not copy the failing model answer into the reference field."
+}
+

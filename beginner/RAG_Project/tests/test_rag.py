@@ -117,6 +117,35 @@ def test_end_to_end_pipeline_writes_evaluation_ready_trace(tmp_path: Path) -> No
     assert (project_root / "results" / "latest.json").exists()
 
 
+def test_application_exposes_internal_retrieve_and_generate_hooks(tmp_path: Path) -> None:
+    project_root = tmp_path
+    (project_root / "documents").mkdir()
+    (project_root / "documents" / "policy.md").write_text(
+        "---\ndocument_id: SEC-17\ntitle: Test\nversion: 1\n---\n"
+        "# Test\n\n## Standard recovery workflow\n\n"
+        "Verify identity and re-enrol the phone for MFA.\n",
+        encoding="utf-8",
+    )
+    settings = Settings(
+        provider="ollama",
+        top_k=1,
+        request_timeout_seconds=10,
+        openai_api_key=None,
+        openai_chat_model="unused",
+        openai_embedding_model="unused",
+        ollama_base_url="http://localhost:11434",
+        ollama_chat_model="fake-generation",
+        ollama_embedding_model="fake-embedding",
+    )
+    application = RAGApplication(project_root, settings, provider=FakeProvider())
+
+    retrieved = application._retrieve("How do I recover MFA on my phone?", 1)
+    answer = application._generate("How do I recover MFA on my phone?", retrieved)
+
+    assert retrieved[0].chunk.chunk_id == "SEC-17::standard-recovery-workflow"
+    assert answer.startswith("Complete identity verification")
+
+
 def test_index_round_trip_preserves_rankings(tmp_path: Path) -> None:
     provider = FakeProvider()
     chunks = [

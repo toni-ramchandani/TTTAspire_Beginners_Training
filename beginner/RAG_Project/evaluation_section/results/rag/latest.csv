@@ -1,0 +1,3 @@
+case_id,scenario_type,business_critical,review_status,bounded_outcome,required_context_recall_at_k,precision_at_k,required_concept_coverage,forbidden_claim_pass,citation_recall,total_latency_ms,issue_components
+SEED-010,normal,False,candidate_requires_human_review,diagnostic_issue_observed,1.0,0.6666666666666666,0.6,1.0,0.5,21525,retrieval|generation-completeness|generation-attribution
+SEED-009,normal,False,candidate_requires_human_review,diagnostic_issue_observed,1.0,0.6666666666666666,0.0,1.0,0.5,4942,retrieval|generation-completeness|generation-attribution
