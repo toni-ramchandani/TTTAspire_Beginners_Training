@@ -1,0 +1,9 @@
+{
+  "top_risks": [],
+  "blocking_rules": [],
+  "selected_signals": [
+    {"risk": "", "metric_or_check": "", "framework": "", "evidence_required": "", "blocking": false}
+  ],
+  "owner": "",
+  "review_notes": ""
+}

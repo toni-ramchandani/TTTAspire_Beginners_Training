@@ -1,0 +1,109 @@
+{
+  "summary": {
+    "status": "pass",
+    "documents": 3,
+    "chunks": 18,
+    "corpus_chunk_ids": 18,
+    "governed_cases": 10,
+    "candidate_cases": 12,
+    "risk_cases": 10,
+    "blocking_risks": 9,
+    "critical_risks": 3,
+    "reference_fixture_pass_rate": 1.0,
+    "framework_calls_made": false,
+    "model_calls_made": false,
+    "failures": []
+  },
+  "cases": [
+    {
+      "case_id": "MED-001",
+      "passed": true,
+      "required_context_recall": 1.0,
+      "citation_validity": 1.0,
+      "citation_recall": 1.0,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    },
+    {
+      "case_id": "MED-002",
+      "passed": true,
+      "required_context_recall": 1.0,
+      "citation_validity": 1.0,
+      "citation_recall": 1.0,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    },
+    {
+      "case_id": "MED-003",
+      "passed": true,
+      "required_context_recall": 1.0,
+      "citation_validity": 1.0,
+      "citation_recall": 1.0,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    },
+    {
+      "case_id": "MED-004",
+      "passed": true,
+      "required_context_recall": 1.0,
+      "citation_validity": 1.0,
+      "citation_recall": 1.0,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    },
+    {
+      "case_id": "MED-005",
+      "passed": true,
+      "required_context_recall": 1.0,
+      "citation_validity": 1.0,
+      "citation_recall": 1.0,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    },
+    {
+      "case_id": "MED-006",
+      "passed": true,
+      "required_context_recall": 1.0,
+      "citation_validity": 1.0,
+      "citation_recall": 1.0,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    },
+    {
+      "case_id": "MED-007",
+      "passed": true,
+      "required_context_recall": 1.0,
+      "citation_validity": 1.0,
+      "citation_recall": 1.0,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    },
+    {
+      "case_id": "MED-008",
+      "passed": true,
+      "required_context_recall": 1.0,
+      "citation_validity": 1.0,
+      "citation_recall": 1.0,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    },
+    {
+      "case_id": "MED-009",
+      "passed": true,
+      "required_context_recall": 1.0,
+      "citation_validity": 1.0,
+      "citation_recall": 1.0,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    },
+    {
+      "case_id": "MED-010",
+      "passed": true,
+      "required_context_recall": 1.0,
+      "citation_validity": 1.0,
+      "citation_recall": 1.0,
+      "required_concept_coverage": 1.0,
+      "forbidden_claim_pass": 1.0
+    }
+  ]
+}

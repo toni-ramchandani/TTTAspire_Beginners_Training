@@ -1,0 +1,3 @@
+# Standalone RAG plus LangSmith observability/evaluation SDK.
+-r requirements.txt
+langsmith==0.10.17

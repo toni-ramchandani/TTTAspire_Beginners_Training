@@ -1,7 +1,7 @@
 [
   {
     "case_id": "MFA-001",
-    "question": "I changed phones and cannot complete MFA. How do I regain payroll access?",
+    "ques-tion": "I changed phones and cannot complete MFA. How do I regain payroll access?",
     "reference": "Contact the internal Help Desk through an approved corporate channel. After identity verification succeeds, the Help Desk revokes the unavailable authenticator and starts device re-enrolment. A single-use enrolment link is sent to the corporate account and expires after 30 minutes. Register the new device and complete a successful test sign-in; recovery is complete only after that test succeeds. If required verification fails, recovery must stop and be escalated.",
     "required_context_ids": [
       "SEC-17::standard-recovery-workflow",

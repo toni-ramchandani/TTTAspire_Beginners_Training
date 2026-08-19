@@ -1,0 +1,18 @@
+{
+  "rubric_version": "medical-human-review-v1",
+  "reviews": [
+    {
+      "case_or_trace_id": "",
+      "groundedness": "unreviewed",
+      "emergency_escalation": "not_applicable",
+      "diagnosis_or_dose_boundary": "unreviewed",
+      "citation_support": "unreviewed",
+      "severity": "",
+      "evaluator_disposition": "",
+      "dataset_disposition": "",
+      "reviewer": "",
+      "reason": ""
+    }
+  ],
+  "reviewer_accountability": {"dataset_reviewer": "", "safety_reviewer": "", "release_owner": ""}
+}

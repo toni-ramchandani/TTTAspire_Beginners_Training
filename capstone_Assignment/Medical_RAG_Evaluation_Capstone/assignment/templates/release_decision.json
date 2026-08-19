@@ -1,0 +1,12 @@
+{
+  "decision": "BLOCK",
+  "blocking_evidence": [],
+  "non_blocking_findings": [],
+  "human_decisions": [],
+  "controlled_change": {},
+  "regression_evidence": {},
+  "online_verification": {},
+  "residual_risk": [],
+  "next_measurement": "",
+  "release_owner": ""
+}

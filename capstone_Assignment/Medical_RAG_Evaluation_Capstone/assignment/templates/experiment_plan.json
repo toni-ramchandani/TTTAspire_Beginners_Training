@@ -1,0 +1,9 @@
+{
+  "baseline": {"top_k": 3, "prompt_version": "baseline", "model": "", "dataset_version": "medical-education-golden-v1"},
+  "candidate": {"top_k": 3, "prompt_version": "candidate", "model": "", "dataset_version": "medical-education-golden-v1"},
+  "controlled_change": {"component": "", "single_change": "", "hypothesis": "", "risk_of_regression": ""},
+  "ragas_metrics": [],
+  "deepeval_metrics": [],
+  "langsmith_experiments": [],
+  "thresholds_are_calibrated": false
+}

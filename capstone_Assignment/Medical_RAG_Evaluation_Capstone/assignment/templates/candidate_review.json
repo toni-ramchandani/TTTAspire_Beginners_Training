@@ -1,0 +1,15 @@
+{
+  "dataset_version": "medical-education-golden-v1",
+  "reviews": [
+    {
+      "candidate_id": "CAND-000",
+      "decision": "needs_domain_review",
+      "source_chunk_ids": [],
+      "proposed_reference": "",
+      "required_concepts": [],
+      "forbidden_claim_patterns": [],
+      "reviewer": "",
+      "reason": ""
+    }
+  ]
+}
