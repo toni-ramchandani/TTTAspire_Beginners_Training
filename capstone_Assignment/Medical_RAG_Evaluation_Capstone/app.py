@@ -23,7 +23,7 @@ DEMO_QUESTIONS = (
 def add_provider_argument(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--provider",
-        choices=("ollama", "openai"),
+        choices=("ollama", "openai", "azure"),
         help="Override RAG_PROVIDER for this command.",
     )
 

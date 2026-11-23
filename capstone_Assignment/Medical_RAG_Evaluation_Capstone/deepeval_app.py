@@ -25,7 +25,7 @@ DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "deepeval_evaluation" / "results"
 
 
 def _provider_argument(parser: argparse.ArgumentParser, name: str, help_text: str) -> None:
-    parser.add_argument(name, choices=("ollama", "openai"), help=help_text)
+    parser.add_argument(name, choices=("ollama", "openai", "azure"), help=help_text)
 
 
 def build_parser() -> argparse.ArgumentParser:

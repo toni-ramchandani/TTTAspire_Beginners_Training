@@ -36,8 +36,8 @@ def parser() -> argparse.ArgumentParser:
 
     evaluate = sub.add_parser("evaluate-rag", help="Run selected seed cases through the current RAG and evaluators.")
     evaluate.add_argument("--dataset", type=Path, default=DEFAULT_DATASET)
-    evaluate.add_argument("--rag-provider", choices=("ollama", "openai"), default="ollama")
-    evaluate.add_argument("--judge-provider", choices=("ollama", "openai"))
+    evaluate.add_argument("--rag-provider", choices=("ollama", "openai", "azure"), default="ollama")
+    evaluate.add_argument("--judge-provider", choices=("ollama", "openai", "azure"))
     evaluate.add_argument("--top-k", type=int, default=3)
     evaluate.add_argument("--metric-profile", choices=("core", "full"), default="core")
     evaluate.add_argument("--case-id", action="append")
@@ -46,7 +46,7 @@ def parser() -> argparse.ArgumentParser:
 
     risk = sub.add_parser("risk-screen", help="Run safe synthetic direct, indirect, and paired risk cases.")
     risk.add_argument("--cases", type=Path, default=DEFAULT_RISK_CASES)
-    risk.add_argument("--rag-provider", choices=("ollama", "openai"), default="ollama")
+    risk.add_argument("--rag-provider", choices=("ollama", "openai", "azure"), default="ollama")
     risk.add_argument("--top-k", type=int, default=3)
     risk.add_argument("--case-id", action="append")
     risk.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT / "risk")

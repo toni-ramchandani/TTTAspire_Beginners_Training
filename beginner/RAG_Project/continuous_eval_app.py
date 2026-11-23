@@ -170,15 +170,15 @@ def parser() -> argparse.ArgumentParser:
     fixture.add_argument("--output-dir", type=Path, default=DEFAULT_RESULTS)
     fixture.add_argument("--semantic", action="store_true")
     fixture.add_argument(
-        "--judge-provider", choices=("ollama", "openai"), default="ollama"
+        "--judge-provider", choices=("ollama", "openai", "azure"), default="ollama"
     )
     fixture.set_defaults(handler=_fixture)
 
     run = sub.add_parser("run", help="Run the production-like traffic through the RAG.")
     run.add_argument("--traffic", type=Path, default=DEFAULT_TRAFFIC)
     run.add_argument("--output-dir", type=Path, default=DEFAULT_RESULTS)
-    run.add_argument("--rag-provider", choices=("ollama", "openai"), default="ollama")
-    run.add_argument("--judge-provider", choices=("ollama", "openai"), default="ollama")
+    run.add_argument("--rag-provider", choices=("ollama", "openai", "azure"), default="ollama")
+    run.add_argument("--judge-provider", choices=("ollama", "openai", "azure"), default="ollama")
     run.add_argument("--top-k", type=int, default=3)
     run.add_argument("--environment", default="workshop")
     run.add_argument("--release-id", default="candidate-v1")

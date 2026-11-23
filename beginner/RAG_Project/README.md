@@ -481,3 +481,34 @@ and pass `--gates evaluation/gates.example.json` when the policy is owned and re
 - Stanford Introduction to Information Retrieval: https://nlp.stanford.edu/IR-book/
 - NIST TREC common evaluation measures: https://trec.nist.gov/pubs/trec10/appendices/measures.pdf
 - scikit-learn nDCG definition: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.ndcg_score.html
+
+
+## Optional Azure OpenAI provider
+
+Azure support is additive. Existing Ollama and OpenAI settings remain the defaults.
+For Azure, copy `.env.example` to local `.env` and fill in:
+`AZURE_OPENAI_ENDPOINT` (HTTPS resource root),
+`AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_CHAT_DEPLOYMENT`, and
+`AZURE_OPENAI_EMBEDDING_DEPLOYMENT`. Use deployment names, not model IDs,
+for the two deployment settings. Never commit real credentials.
+
+Azure RAG uses the existing OpenAI SDK and its `/openai/v1/` endpoint.
+The chat deployment used by RAG must support the Responses API.
+Ragas uses the same endpoint with its existing asynchronous OpenAI adapter.
+DeepEval uses the native `AzureOpenAIModel` and additionally requires
+`AZURE_OPENAI_API_VERSION` and an underlying model ID in
+`DEEPEVAL_AZURE_MODEL_NAME` (default `gpt-4.1`).
+The configured Azure deployment and API version must support Chat Completions.
+
+```bash
+python app.py build --provider azure
+python eval_app.py preflight --judge-provider azure --live
+python deepeval_app.py preflight --judge-provider azure --live
+python eval_app.py run --rag-provider azure --judge-provider azure --metric-profile core
+```
+
+Use `--rag-provider ollama --judge-provider azure` to retain local RAG
+generation while evaluating with an Azure-hosted judge. Each provider can
+still be selected independently. Azure Entra ID authentication is outside
+this minimal API-key implementation. Azure usage incurs service charges.
+

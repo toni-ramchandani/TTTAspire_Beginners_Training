@@ -231,3 +231,30 @@ def test_disabled_example_gates_do_not_create_an_invented_release_bar() -> None:
     result = apply_gates(report, PROJECT_ROOT / "evaluation" / "gates.example.json")
 
     assert result == {"enabled": False, "passed": True, "failures": []}
+
+
+def test_azure_ragas_judge_settings(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("AZURE_OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("AZURE_OPENAI_ENDPOINT", "https://test.openai.azure.com")
+    monkeypatch.setenv("AZURE_OPENAI_CHAT_DEPLOYMENT", "chat-deployment")
+    monkeypatch.setenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT", "embed-deployment")
+    settings = JudgeSettings.from_env(tmp_path, "azure")
+    assert settings.base_url == "https://test.openai.azure.com/openai/v1/"
+    assert settings.chat_model == "chat-deployment"
+    assert settings.embedding_model == "embed-deployment"
+
+
+def test_azure_deepeval_judge_settings(monkeypatch, tmp_path: Path) -> None:
+    from deepeval_evaluation.judges import DeepEvalJudgeSettings
+
+    monkeypatch.setenv("AZURE_OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("AZURE_OPENAI_ENDPOINT", "https://test.openai.azure.com")
+    monkeypatch.setenv("AZURE_OPENAI_CHAT_DEPLOYMENT", "judge-deployment")
+    monkeypatch.setenv("AZURE_OPENAI_API_VERSION", "2025-01-01-preview")
+    monkeypatch.setenv("DEEPEVAL_AZURE_MODEL_NAME", "gpt-4.1")
+    settings = DeepEvalJudgeSettings.from_env(tmp_path, "azure")
+    assert settings.deployment_name == "judge-deployment"
+    assert settings.model_name == "gpt-4.1"
+    assert settings.api_version == "2025-01-01-preview"
+
+

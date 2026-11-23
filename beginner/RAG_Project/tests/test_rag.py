@@ -270,3 +270,46 @@ def test_ollama_adapter_uses_embed_and_chat_endpoints(monkeypatch) -> None:
     assert requests[1][0] == "http://localhost:11434/api/chat"
     assert requests[1][1]["model"] == "local-chat"
     assert requests[1][1]["stream"] is False
+
+
+def test_azure_provider_uses_deployment_names_and_v1(monkeypatch, tmp_path: Path) -> None:
+    import openai
+    from rag.providers import create_provider
+
+    monkeypatch.setenv("AZURE_OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("AZURE_OPENAI_ENDPOINT", "https://test.openai.azure.com")
+    monkeypatch.setenv("AZURE_OPENAI_CHAT_DEPLOYMENT", "chat-deployment")
+    monkeypatch.setenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT", "embed-deployment")
+    settings = Settings.from_env(tmp_path, "azure")
+    calls = {}
+
+    class Client:
+        def __init__(self):
+            self.embeddings = SimpleNamespace(create=self.embedding)
+            self.responses = SimpleNamespace(create=self.response)
+
+        def embedding(self, **kwargs):
+            calls["embed"] = kwargs
+            return SimpleNamespace(
+                data=[SimpleNamespace(index=0, embedding=[1.0, 0.0])]
+            )
+
+        def response(self, **kwargs):
+            calls["response"] = kwargs
+            return SimpleNamespace(output_text="Grounded answer")
+
+    def fake_client(**kwargs):
+        calls["client"] = kwargs
+        return Client()
+
+    monkeypatch.setattr(openai, "OpenAI", fake_client)
+    provider = create_provider(settings)
+    assert provider.provider_name == "azure"
+    assert provider.embed(["test"]) == [[1.0, 0.0]]
+    assert provider.generate("instructions", "prompt") == "Grounded answer"
+    assert calls["client"]["base_url"] == "https://test.openai.azure.com/openai/v1/"
+    assert calls["embed"]["model"] == "embed-deployment"
+    assert calls["response"]["model"] == "chat-deployment"
+    assert settings.index_filename.startswith("index-azure-")
+
+

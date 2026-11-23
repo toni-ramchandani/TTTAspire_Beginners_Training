@@ -200,7 +200,7 @@ def build_parser() -> argparse.ArgumentParser:
         "run", help="Run the real RAG over the governed golden cases."
     )
     run_parser.add_argument(
-        "--rag-provider", choices=("ollama", "openai"), default="ollama"
+        "--rag-provider", choices=("ollama", "openai", "azure"), default="ollama"
     )
     run_parser.add_argument("--top-k", type=int, default=3)
     run_parser.add_argument("--case-id", action="append")
@@ -220,7 +220,7 @@ def build_parser() -> argparse.ArgumentParser:
     trace_parser = subparsers.add_parser("trace-one")
     trace_parser.add_argument("question")
     trace_parser.add_argument(
-        "--rag-provider", choices=("ollama", "openai"), default="ollama"
+        "--rag-provider", choices=("ollama", "openai", "azure"), default="ollama"
     )
     trace_parser.add_argument("--top-k", type=int, default=3)
     trace_parser.add_argument("--confirm-hosted", action="store_true")
