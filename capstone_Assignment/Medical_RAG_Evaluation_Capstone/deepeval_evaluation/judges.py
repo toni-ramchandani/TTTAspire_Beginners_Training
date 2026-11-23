@@ -23,6 +23,8 @@ class DeepEvalJudgeSettings:
     base_url: str | None
     timeout_seconds: float
     max_concurrent: int
+    deployment_name: str | None = None
+    api_version: str | None = None
 
     @classmethod
     def from_env(
@@ -34,9 +36,9 @@ class DeepEvalJudgeSettings:
         provider = (
             provider_override or os.getenv("DEEPEVAL_JUDGE_PROVIDER", "ollama")
         ).strip().lower()
-        if provider not in {"ollama", "openai"}:
+        if provider not in {"ollama", "openai", "azure"}:
             raise DeepEvalConfigurationError(
-                "DEEPEVAL_JUDGE_PROVIDER must be 'ollama' or 'openai'."
+                "DEEPEVAL_JUDGE_PROVIDER must be 'ollama', 'openai', or 'azure'."
             )
 
         try:
@@ -69,6 +71,33 @@ class DeepEvalJudgeSettings:
                 base_url=None,
                 timeout_seconds=timeout_seconds,
                 max_concurrent=max_concurrent,
+            )
+
+        if provider == "azure":
+            api_key = os.getenv("AZURE_OPENAI_API_KEY", "").strip()
+            endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "").strip().rstrip("/")
+            deployment = (
+                os.getenv("DEEPEVAL_AZURE_DEPLOYMENT_NAME")
+                or os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT", "")
+            ).strip()
+            api_version = os.getenv("AZURE_OPENAI_API_VERSION", "").strip()
+            if not all((api_key, endpoint, deployment, api_version)):
+                raise DeepEvalConfigurationError(
+                    "Azure DeepEval needs AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, "
+                    "a chat deployment and AZURE_OPENAI_API_VERSION."
+                )
+            if not endpoint.startswith("https://"):
+                raise DeepEvalConfigurationError("AZURE_OPENAI_ENDPOINT must use HTTPS.")
+            if endpoint.endswith("/openai/v1"):
+                raise DeepEvalConfigurationError(
+                    "DeepEval Azure endpoint must be the resource root, not /openai/v1."
+                )
+            return cls(
+                provider=provider,
+                model_name=os.getenv("DEEPEVAL_AZURE_MODEL_NAME", "gpt-4.1").strip(),
+                api_key=api_key, base_url=endpoint,
+                timeout_seconds=timeout_seconds, max_concurrent=max_concurrent,
+                deployment_name=deployment, api_version=api_version,
             )
 
         return cls(
@@ -113,7 +142,7 @@ def dependency_versions() -> dict[str, str]:
 
 def build_judge_bundle(settings: DeepEvalJudgeSettings) -> DeepEvalJudgeBundle:
     try:
-        from deepeval.models import GPTModel, OllamaModel
+        from deepeval.models import AzureOpenAIModel, GPTModel, OllamaModel
     except (ImportError, ModuleNotFoundError) as exc:
         raise DeepEvalConfigurationError(
             "DeepEval dependencies are unavailable. Install the tested set with: "
@@ -137,6 +166,14 @@ def build_judge_bundle(settings: DeepEvalJudgeSettings) -> DeepEvalJudgeBundle:
                 model=settings.model_name,
                 api_key=settings.api_key,
                 temperature=0,
+            )
+        elif settings.provider == "azure":
+            model = AzureOpenAIModel(
+                model=settings.model_name,
+                deployment_name=settings.deployment_name,
+                api_key=settings.api_key,
+                api_version=settings.api_version,
+                base_url=settings.base_url,
             )
         else:
             model = OllamaModel(

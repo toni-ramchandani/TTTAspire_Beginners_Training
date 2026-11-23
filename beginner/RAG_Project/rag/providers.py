@@ -1,4 +1,4 @@
-"""OpenAI and Ollama implementations behind one small provider interface."""
+"""OpenAI, Azure OpenAI, and Ollama share a small provider interface."""
 
 from __future__ import annotations
 
@@ -81,6 +81,37 @@ class OpenAIProvider:
         return answer
 
 
+class AzureOpenAIProvider(OpenAIProvider):
+    """Reuse OpenAI's Responses and embeddings calls on Azure's v1 endpoint."""
+
+    provider_name = "azure"
+
+    def __init__(self, settings: Settings) -> None:
+        if not settings.azure_openai_api_key or not settings.azure_openai_endpoint:
+            raise ConfigurationError(
+                "Azure OpenAI requires AZURE_OPENAI_API_KEY and AZURE_OPENAI_ENDPOINT."
+            )
+        try:
+            from openai import OpenAI
+        except ImportError as exc:
+            raise ConfigurationError(
+                "The 'openai' package is missing. Run: pip install -r requirements.txt"
+            ) from exc
+
+        endpoint = settings.azure_openai_endpoint.rstrip("/")
+        base_url = (
+            f"{endpoint}/" if endpoint.endswith("/openai/v1")
+            else f"{endpoint}/openai/v1/"
+        )
+        self.embedding_model = settings.azure_openai_embedding_deployment
+        self.generation_model = settings.azure_openai_chat_deployment
+        self._client = OpenAI(
+            api_key=settings.azure_openai_api_key,
+            base_url=base_url,
+            timeout=settings.request_timeout_seconds,
+        )
+
+
 class OllamaProvider:
     provider_name = "ollama"
 
@@ -148,4 +179,6 @@ class OllamaProvider:
 def create_provider(settings: Settings) -> ModelProvider:
     if settings.provider == "openai":
         return OpenAIProvider(settings)
+    if settings.provider == "azure":
+        return AzureOpenAIProvider(settings)
     return OllamaProvider(settings)

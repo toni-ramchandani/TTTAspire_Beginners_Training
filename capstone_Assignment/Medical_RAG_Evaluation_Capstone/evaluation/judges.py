@@ -39,9 +39,9 @@ class JudgeSettings:
         provider = (
             provider_override or os.getenv("RAGAS_JUDGE_PROVIDER", "ollama")
         ).strip().lower()
-        if provider not in {"ollama", "openai"}:
+        if provider not in {"ollama", "openai", "azure"}:
             raise JudgeConfigurationError(
-                "RAGAS_JUDGE_PROVIDER must be 'ollama' or 'openai'."
+                "RAGAS_JUDGE_PROVIDER must be 'ollama', 'openai', or 'azure'."
             )
 
         try:
@@ -82,6 +82,35 @@ class JudgeSettings:
                 base_url=None,
                 timeout_seconds=timeout_seconds,
                 max_retries=max_retries,
+                max_tokens=max_tokens,
+            )
+
+        if provider == "azure":
+            api_key = os.getenv("AZURE_OPENAI_API_KEY", "").strip()
+            endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "").strip().rstrip("/")
+            chat = (
+                os.getenv("RAGAS_AZURE_CHAT_DEPLOYMENT")
+                or os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT", "")
+            ).strip()
+            embedding = (
+                os.getenv("RAGAS_AZURE_EMBEDDING_DEPLOYMENT")
+                or os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT", "")
+            ).strip()
+            if not all((api_key, endpoint, chat, embedding)):
+                raise JudgeConfigurationError(
+                    "Azure Ragas needs AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, "
+                    "a chat deployment and an embedding deployment."
+                )
+            if not endpoint.startswith("https://"):
+                raise JudgeConfigurationError("AZURE_OPENAI_ENDPOINT must use HTTPS.")
+            base_url = (
+                f"{endpoint}/" if endpoint.endswith("/openai/v1")
+                else f"{endpoint}/openai/v1/"
+            )
+            return cls(
+                provider=provider, chat_model=chat, embedding_model=embedding,
+                api_key=api_key, base_url=base_url,
+                timeout_seconds=timeout_seconds, max_retries=max_retries,
                 max_tokens=max_tokens,
             )
 
